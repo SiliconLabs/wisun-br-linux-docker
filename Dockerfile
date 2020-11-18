@@ -1,6 +1,8 @@
 FROM alpine:3.12
 LABEL maintainer="Jérôme Pouiller <jerome.pouiller@silabs.com>"
 
+RUN apk add --no-cache radvd
+
 WORKDIR /usr/src
 COPY tunslip6-install.sh .
 COPY tunslip6            ./tunslip6
