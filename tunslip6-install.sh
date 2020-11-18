@@ -13,8 +13,6 @@ set -e
 # If it does not exist followwing commands won't work
 [ -d ./tunslip6 ]
 
-apk add --no-cache --virtual .build-deps gcc musl-dev linux-headers make
+apk add linux-headers
 make -C ./tunslip6 -j $(nproc) all
 make -C ./tunslip6 install
-make -C ./tunslip6 distclean
-apk del .build-deps

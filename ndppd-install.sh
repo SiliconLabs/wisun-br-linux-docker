@@ -11,12 +11,10 @@ set -e
 # This script expects to run as root
 [ $(id -u) == 0 ]
 
-apk add --no-cache --virtual .build-deps linux-headers gcc g++ make pkgconf git glib-dev
+apk add git glib-dev
 git clone --quiet https://github.com/DanielAdolfsson/ndppd.git ./ndppd
 git -C ./ndppd reset --hard b30b654
 git -C ./ndppd apply ../ndppd-0001-Fixes-strerror_r-GNU-XSI.patch
 git -C ./ndppd apply ../ndppd-0002-fix-poll-header.patch
 make -C ./ndppd -j $(nproc) all nd-proxy
 make -C ./ndppd install
-rm -r ./ndppd
-apk del .build-deps

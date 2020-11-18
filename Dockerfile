@@ -1,7 +1,8 @@
-FROM alpine:3.12
+FROM alpine:3.12 AS builder
 LABEL maintainer="Jérôme Pouiller <jerome.pouiller@silabs.com>"
 
 RUN apk add --no-cache radvd
+RUN apk add build-base
 
 WORKDIR /usr/src
 COPY tunslip6-install.sh .
@@ -13,3 +14,8 @@ COPY ndppd-install.sh                          .
 COPY ndppd-0001-Fixes-strerror_r-GNU-XSI.patch .
 COPY ndppd-0002-fix-poll-header.patch          .
 RUN  ./ndppd-install.sh
+
+FROM alpine:3.12 AS runtime
+RUN apk add --no-cache radvd
+RUN apk add --no-cache libstdc++ glib
+COPY --from=builder /usr/local /usr/local
