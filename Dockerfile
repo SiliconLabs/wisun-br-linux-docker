@@ -1,7 +1,5 @@
 FROM alpine:3.12 AS builder
 LABEL maintainer="Jérôme Pouiller <jerome.pouiller@silabs.com>"
-
-RUN apk add --no-cache radvd
 RUN apk add build-base
 
 WORKDIR /usr/src
