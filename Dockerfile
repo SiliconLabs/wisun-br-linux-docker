@@ -14,6 +14,7 @@ COPY ndppd-0002-fix-poll-header.patch          .
 RUN  ./ndppd-install.sh
 
 FROM alpine:3.12 AS runtime
+RUN mkdir -p /run/radvd
 RUN apk add --no-cache radvd
 RUN apk add --no-cache libstdc++ glib
 COPY --from=builder /usr/local /usr/local
