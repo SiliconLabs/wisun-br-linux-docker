@@ -18,3 +18,7 @@ RUN mkdir -p /run/radvd
 RUN apk add --no-cache radvd
 RUN apk add --no-cache libstdc++
 COPY --from=builder /usr/local /usr/local
+COPY init-container.sh /init
+
+ENTRYPOINT [ "/init" ]
+CMD [ "local" ]
