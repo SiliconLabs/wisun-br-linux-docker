@@ -41,6 +41,7 @@
 #include <string.h>
 #include <time.h>
 #include <sys/types.h>
+#include <sys/time.h>
 
 #include <unistd.h>
 #include <errno.h>
@@ -685,7 +686,7 @@ ifconf(const char *tundev, const char *ipaddr)
     }
     ai=0;
     cc=scc=0;
-    while(c=*ptr++) {
+    while((c=*ptr++)) {
       if(c=='/') break;
       if(c==':') {
 	if(cc)
@@ -1044,6 +1045,7 @@ exit(1);
             struct timeval tv;
             gettimeofday(&tv, NULL) ;
  //         delaymsec=basedelay*(1+(size/120));//multiply by # of 6lowpan packets?
+            size=size; // avoid warning about unused size
             delaymsec=basedelay;
             delaystartsec =tv.tv_sec;
             delaystartmsec=tv.tv_usec/1000;
