@@ -96,10 +96,38 @@ launch_last_process()
     fi
 }
 
+run_proxy()
+{
+    sysctl -q net.ipv6.conf.default.disable_ipv6=0
+    sysctl -q net.ipv6.conf.all.disable_ipv6=0
+    sysctl -q net.ipv6.conf.default.forwarding=1
+    sysctl -q net.ipv6.conf.all.forwarding=1
+    sysctl -q net.ipv6.conf.default.accept_ra=2
+    sysctl -q net.ipv6.conf.eth0.accept_ra=2
+
+    for i in $(seq 10); do
+        ip -6 addr show eth0 | grep -q global && break
+        sleep 0.2
+    done
+    IPV6_NET=$(rdisc6 -r 5 -w 300 -q -1 eth0)
+    [ "$IPV6_NET" ] || die "Failed to get IPv6 address"
+
+    launch_tunslip6 fd01::1/64
+    # tunslip6 add these addresses but it is useless
+    ip addr del dev tun0 fe80::1/64
+    ip addr del dev tun0 fd01::1/64
+    launch_radvd $IPV6_NET
+    launch_ndppd $IPV6_NET
+    launch_last_process
+}
+
 case "$1" in
     local)
         run_local
         ;;
+    proxy)
+        run_proxy
+        ;;
     *)
-        echo "usage: $0 [local]"
+        echo "usage: $0 [local|proxy]"
 esac
