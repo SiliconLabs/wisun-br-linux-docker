@@ -17,6 +17,25 @@ die()
     exit 1
 }
 
+print_usage()
+{
+    cat << EOF >&2
+Usage: $1 [OPTIONS] [MODE]
+
+Options:
+  -d, --device=DEVICE  UART device to use (default: /dev/ttyACM0)
+  -s, --shell          Launch a shell on launch
+  -h, --help           Show this help
+
+Modes:
+  local    Only nodes to be configured and communicate with the docker instance.
+  proxy    Run a proxy allowing to communicate with local network
+  auto     Detect if a local IPv6 network is availabe and launch \`local' or
+           \`proxy' accordingly.
+EOF
+    [ "$2" ] && exit $2
+}
+
 launch_tunslip6()
 {
     IPV6_IP=$1
@@ -151,5 +170,6 @@ case "$1" in
         run_proxy
         ;;
     *)
-        echo "usage: $0 [auto|local|proxy]"
+        print_usage $0
+        exit 1
 esac
