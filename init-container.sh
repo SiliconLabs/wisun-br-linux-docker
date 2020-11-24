@@ -46,22 +46,6 @@ EOF
     radvd --logmethod stderr
 }
 
-run_local()
-{
-    sysctl net.ipv6.conf.default.disable_ipv6=0
-    sysctl net.ipv6.conf.all.forwarding=1
-    cat << EOF > /etc/radvd.conf
-interface tun0 {
-    AdvSendAdvert on;
-    IgnoreIfMissing on;
-    prefix ::/64 {
-    };
-};
-EOF
-    radvd --logmethod stderr
-    launch_tunslip6 fd00::1
-}
-
 launch_ndppd()
 {
     IPV6_NET=$1
@@ -118,6 +102,22 @@ run_proxy()
     ip addr del dev tun0 fd01::1/64
     launch_radvd $IPV6_NET
     launch_ndppd $IPV6_NET
+    launch_last_process
+}
+
+run_local()
+{
+    sysctl -q net.ipv6.conf.default.disable_ipv6=0
+    sysctl -q net.ipv6.conf.all.disable_ipv6=0
+    sysctl -q net.ipv6.conf.default.forwarding=1
+    sysctl -q net.ipv6.conf.all.forwarding=1
+    sysctl -q net.ipv6.conf.default.accept_ra=2
+    sysctl -q net.ipv6.conf.all.accept_ra=2
+
+    launch_tunslip6 fd01::1/64
+    # tunslip6 add this address but it is useless
+    ip addr del dev tun0 fe80::1/64
+    launch_radvd ::/64
     launch_last_process
 }
 
