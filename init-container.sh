@@ -159,6 +159,29 @@ run_auto()
     fi
 }
 
+OPTS=$(getopt -l device:,shell,help -- d:sh "$@") || exit 1
+eval set -- "$OPTS"
+while true; do
+    case "$1" in
+        -s|--shell)
+            LAUNCH_SHELL=1
+            shift 1
+            ;;
+        -d|--device)
+            UART=$2
+            shift 2
+            ;;
+        -h|--help)
+            print_usage $0
+            exit 0
+            ;;
+        --)
+            shift
+            break
+            ;;
+    esac
+done
+
 case "$1" in
     auto|"")
         run_auto
