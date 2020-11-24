@@ -22,4 +22,4 @@ COPY --from=builder /usr/local /usr/local
 COPY init-container.sh /init
 
 ENTRYPOINT [ "/init" ]
-CMD [ "local" ]
+CMD [ "auto" ]

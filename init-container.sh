@@ -121,7 +121,29 @@ run_local()
     launch_last_process
 }
 
+run_auto()
+{
+    sysctl -q net.ipv6.conf.eth0.accept_ra=2
+    sysctl -q net.ipv6.conf.eth0.disable_ipv6=0
+
+    HAVE_IPV6=
+    for i in $(seq 20); do
+        ip -6 addr show eth0 | grep -q global && HAVE_IPV6=1 && break
+        sleep 0.2
+    done
+    if [ "$HAVE_IPV6" ]; then
+        echo "** [1mFound IPv6 network[0m"
+        run_proxy
+    else
+        echo "** [1mNo network found[0m"
+        run_local
+    fi
+}
+
 case "$1" in
+    auto|"")
+        run_auto
+        ;;
     local)
         run_local
         ;;
@@ -129,5 +151,5 @@ case "$1" in
         run_proxy
         ;;
     *)
-        echo "usage: $0 [local|proxy]"
+        echo "usage: $0 [auto|local|proxy]"
 esac
