@@ -13,8 +13,8 @@ set -e
 
 apk add git glib-dev
 git clone --quiet https://github.com/DanielAdolfsson/ndppd.git ./ndppd
-git -C ./ndppd reset --hard b30b654
+git -C ./ndppd reset --hard e01d67a
 git -C ./ndppd apply ../ndppd-0001-Fixes-strerror_r-GNU-XSI.patch
 git -C ./ndppd apply ../ndppd-0002-fix-poll-header.patch
-make -C ./ndppd -j $(nproc) all nd-proxy
+make -C ./ndppd -j $(nproc)
 make -C ./ndppd install
