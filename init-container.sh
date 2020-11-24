@@ -62,6 +62,29 @@ EOF
     launch_tunslip6 fd00::1
 }
 
+launch_ndppd()
+{
+    IPV6_NET=$1
+
+    echo "** [1mLaunch ndppd on $IPV6_NET[0m"
+    cat << EOF > /etc/ndppd.conf
+proxy eth0 {
+    autowire yes
+    rule $IPV6_NET {
+        iface tun0
+    }
+}
+
+proxy tun0 {
+    autowire yes
+    rule $IPV6_NET {
+        iface eth0
+    }
+}
+EOF
+    ndppd -d
+}
+
 case "$1" in
     local)
         run_local

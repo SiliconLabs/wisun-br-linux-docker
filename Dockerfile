@@ -16,6 +16,7 @@ RUN  ./ndppd-install.sh
 FROM alpine:3.12 AS runtime
 RUN mkdir -p /run/radvd
 RUN apk add --no-cache radvd
+RUN apk add --no-cache ndisc6
 RUN apk add --no-cache libstdc++
 COPY --from=builder /usr/local /usr/local
 COPY init-container.sh /init
