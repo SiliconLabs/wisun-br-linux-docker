@@ -85,6 +85,17 @@ EOF
     ndppd -d
 }
 
+launch_last_process()
+{
+    if [ "$LAUNCH_SHELL" ]; then
+        echo "** [1mLaunch sh[0m"
+        echo "Note: \"docker exec -it <CONTAINER> sh\" is a better alternative"
+        exec sh
+    else
+        tail -f /dev/null
+    fi
+}
+
 case "$1" in
     local)
         run_local
