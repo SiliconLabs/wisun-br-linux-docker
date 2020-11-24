@@ -36,6 +36,13 @@ EOF
     [ "$2" ] && exit $2
 }
 
+check_privilege()
+{
+    ip link add dummy0 type dummy 2> /dev/null || \
+        die "Not enough privilege to run (missing --privileged?)"
+    ip link delete dummy0
+}
+
 launch_tunslip6()
 {
     IPV6_IP=$1
@@ -158,6 +165,8 @@ run_auto()
         run_local
     fi
 }
+
+check_privilege
 
 OPTS=$(getopt -l device:,shell,help -- d:sh "$@") || exit 1
 eval set -- "$OPTS"
