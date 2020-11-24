@@ -30,6 +30,22 @@ launch_tunslip6()
     done
 }
 
+launch_radvd()
+{
+    IPV6_NET=$1
+
+    echo "** [1mLaunch radvd on $IPV6_NET[0m"
+cat << EOF > /etc/radvd.conf
+interface tun0 {
+    AdvSendAdvert on;
+    IgnoreIfMissing on;
+    prefix $IPV6_NET {
+    };
+};
+EOF
+    radvd --logmethod stderr
+}
+
 run_local()
 {
     sysctl net.ipv6.conf.default.disable_ipv6=0
