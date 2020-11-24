@@ -7,6 +7,12 @@
 #     - Jérôme Pouiller <jerome.pouiller@silabs.com>
 #
 
+die()
+{
+    echo "$@" >&2
+    exit 1
+}
+
 launch_tunslip6()
 {
     exec tunslip6 -s /dev/ttyUSB0 -B 115200 "$@"
