@@ -6,6 +6,10 @@
 # Main authors:
 #     - Jérôme Pouiller <jerome.pouiller@silabs.com>
 #
+# turn on bash's job control
+set -m
+
+UART=/dev/ttyACM0
 
 die()
 {
@@ -15,7 +19,15 @@ die()
 
 launch_tunslip6()
 {
-    exec tunslip6 -s /dev/ttyUSB0 -B 115200 "$@"
+    IPV6_IP=$1
+    [ -e "$UART" ] || die "Failed to detect $UART"
+
+    echo "** [1mLaunch tunslip6 on $UART[0m"
+    tunslip6 -s $UART -B 115200 $IPV6_IP &
+    for i in $(seq 10); do
+        ip -6 addr show tun0 | grep -q $IPV6_IP && break
+        sleep 0.2
+    done
 }
 
 run_local()
