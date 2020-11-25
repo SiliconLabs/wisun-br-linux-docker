@@ -11,7 +11,7 @@ set -e
 # This script expects to run as root
 [ $(id -u) == 0 ]
 
-apk add git glib-dev
+apk add git
 git clone --quiet https://github.com/DanielAdolfsson/ndppd.git ./ndppd
 git -C ./ndppd reset --hard e01d67a
 git -C ./ndppd apply ../ndppd-0001-Fixes-strerror_r-GNU-XSI.patch
