@@ -57,7 +57,7 @@ launch_tunslip6()
     IPV6_IP=$1
     [ -e "$UART" ] || die "Failed to detect $UART"
 
-    echo "** [1mLaunch tunslip6 on $UART[0m"
+    echo " ---> [1mLaunch tunslip6 on $UART[0m"
     tunslip6 -s $UART -B 115200 $IPV6_IP &
     for i in $(seq 10); do
         ip -6 addr show tun0 | grep -q $IPV6_IP && break
@@ -69,7 +69,7 @@ launch_radvd()
 {
     IPV6_NET=$1
 
-    echo "** [1mLaunch radvd on $IPV6_NET[0m"
+    echo " ---> [1mLaunch radvd on $IPV6_NET[0m"
 cat << EOF > /etc/radvd.conf
 interface tun0 {
     AdvSendAdvert on;
@@ -85,7 +85,7 @@ launch_ndppd()
 {
     IPV6_NET=$1
 
-    echo "** [1mLaunch ndppd on $IPV6_NET[0m"
+    echo " ---> [1mLaunch ndppd on $IPV6_NET[0m"
     cat << EOF > /etc/ndppd.conf
 proxy eth0 {
     autowire yes
@@ -107,7 +107,7 @@ EOF
 launch_last_process()
 {
     if [ "$LAUNCH_SHELL" ]; then
-        echo "** [1mLaunch sh[0m"
+        echo " ---> [1mLaunch sh[0m"
         echo "Note: \"docker exec -it <CONTAINER> sh\" is a better alternative"
         exec sh
     else
@@ -168,10 +168,10 @@ run_auto()
         sleep 0.2
     done
     if [ "$HAVE_IPV6" ]; then
-        echo "** [1mFound IPv6 network[0m"
+        echo " ---> [1mFound IPv6 network[0m"
         run_proxy
     else
-        echo "** [1mNo network found[0m"
+        echo " ---> [1mNo network found[0m"
         run_local
     fi
 }
