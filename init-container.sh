@@ -24,6 +24,7 @@ Usage: $1 [OPTIONS] [MODE]
 
 Options:
   -d, --device=DEVICE  UART device to use (default: /dev/ttyACM0)
+  -D, --dhcp           Configure IPv4 using DHCP
   -s, --shell          Launch a shell on launch
   -h, --help           Show this help
 
@@ -41,6 +42,14 @@ check_privilege()
     ip link add dummy0 type dummy 2> /dev/null || \
         die "Not enough privilege to run (missing --privileged?)"
     ip link delete dummy0
+}
+
+launch_dhcpc()
+{
+    if [ "$LAUNCH_DHCPC" ]; then
+        umount /etc/resolv.conf
+        udhcpc -i eth0
+    fi
 }
 
 launch_tunslip6()
@@ -115,6 +124,7 @@ run_proxy()
     sysctl -q net.ipv6.conf.default.accept_ra=2
     sysctl -q net.ipv6.conf.eth0.accept_ra=2
 
+    launch_dhcpc
     for i in $(seq 10); do
         ip -6 addr show eth0 | grep -q global && break
         sleep 0.2
@@ -168,12 +178,16 @@ run_auto()
 
 check_privilege
 
-OPTS=$(getopt -l device:,shell,help -- d:sh "$@") || exit 1
+OPTS=$(getopt -l device:,dhcp,shell,help -- d:Dsh "$@") || exit 1
 eval set -- "$OPTS"
 while true; do
     case "$1" in
         -s|--shell)
             LAUNCH_SHELL=1
+            shift 1
+            ;;
+        -D|--dhcp)
+            LAUNCH_DHCPC=1
             shift 1
             ;;
         -d|--device)
