@@ -46,10 +46,8 @@ check_privilege()
 
 launch_dhcpc()
 {
-    if [ "$LAUNCH_DHCPC" ]; then
-        umount /etc/resolv.conf
-        udhcpc -i eth0
-    fi
+    umount /etc/resolv.conf
+    udhcpc -i eth0
 }
 
 launch_tunslip6()
@@ -124,9 +122,8 @@ run_proxy()
     sysctl -q net.ipv6.conf.default.forwarding=1
     sysctl -q net.ipv6.conf.all.forwarding=1
     sysctl -q net.ipv6.conf.default.accept_ra=2
-    sysctl -q net.ipv6.conf.eth0.accept_ra=2
+    sysctl -q net.ipv6.conf.all.accept_ra=2
 
-    launch_dhcpc
     for i in $(seq 10); do
         ip -6 addr show eth0 | grep -q global && break
         sleep 0.2
@@ -161,9 +158,6 @@ run_local()
 
 run_auto()
 {
-    sysctl -q net.ipv6.conf.eth0.accept_ra=2
-    sysctl -q net.ipv6.conf.eth0.disable_ipv6=0
-
     HAVE_IPV6=
     for i in $(seq 20); do
         ip -6 addr show eth0 | grep -q global && HAVE_IPV6=1 && break
@@ -206,6 +200,10 @@ while true; do
             ;;
     esac
 done
+
+sysctl -q net.ipv6.conf.eth0.accept_ra=2
+sysctl -q net.ipv6.conf.eth0.disable_ipv6=0
+[ "$LAUNCH_DHCPC" ] && launch_dhcpc
 
 case "$1" in
     auto|"")
