@@ -50,6 +50,23 @@ Modes:
 
 Note that random site-local prefixes are not routable (ie. you can't access
 outside with these).
+
+Examples:
+
+  Provide minimal infrastructure to configure WiSun device through a Border
+  Router connected on /dev/ttyUSB0:
+
+    $1 -d /dev/ttyUSB0 local
+
+  Parent router is correctly configured to delegate prefix
+  2a01:e35:2435:66a1::/64 to my docker container:
+
+    $1 subnet 2a01:e35:2435:66a1::1/64
+
+  You want to test prefix delegation with a random prefix:
+
+    other_host> sysctl net.ipv6.conf.eth0.accept_ra_rt_info_max_plen=128
+    this_host> $1 subnet -r
 EOF
     [ "$2" ] && exit $2
 }
