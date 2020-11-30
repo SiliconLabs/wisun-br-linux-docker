@@ -37,6 +37,15 @@ EOF
     [ "$2" ] && exit $2
 }
 
+get_random_prefix()
+{
+    N1=$(dd bs=1 count=1 if=/dev/urandom 2> /dev/null | od -A n -t x1)
+    N2=$(dd bs=2 count=1 if=/dev/urandom 2> /dev/null | od -A n -t x2)
+    N3=$(dd bs=2 count=1 if=/dev/urandom 2> /dev/null | od -A n -t x2)
+    N4=$(dd bs=2 count=1 if=/dev/urandom 2> /dev/null | od -A n -t x2)
+    echo $N1:$N2:$N3:$N4 | tr -d ' '
+}
+
 check_privilege()
 {
     ip link add dummy0 type dummy 2> /dev/null || \
