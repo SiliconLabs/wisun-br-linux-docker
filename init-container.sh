@@ -29,14 +29,17 @@ Options:
   -h, --help           Show this help
 
 Modes:
-  local      The nodes will be only able to communicate with the docker
-             instance using a random site-local prefix.
-  site_local Advertise a random site-local prefix and run a proxy. Local
-             workstations will retrieve an IPv6 address allowing them to
-             communicate with WiSun nodes.
-  proxy      Re-use the local IPv6 prefix to configure WiSun nodes.
-  auto       Detect if a local IPv6 network is availabe and launch
-             \`site_local' or \`proxy' accordingly.
+  local           The nodes will be only able to communicate with the docker
+                  instance using a random site-local prefix.
+  site_local      Advertise a random site-local prefix and run a proxy. Local
+                  workstations will retrieve an IPv6 address allowing them to
+                  communicate with WiSun nodes.
+  proxy           Re-use the local IPv6 prefix to configure WiSun nodes.
+  subnet [PREFIX] Use PREFIX to configure WiSun nodes. PREFIX should come from
+                  configuration of the parent router. If PREFIX is not defined,
+                  generate a random site-local one.
+  auto            Detect if a local IPv6 network is availabe and launch
+                  \`site_local' or \`proxy' accordingly.
 
 Note that random site-local prefixes are not routable (ie. you can't access
 outside with these).
@@ -209,6 +212,21 @@ run_local()
     launch_last_process
 }
 
+run_subnet()
+{
+    sysctl -q net.ipv6.conf.default.disable_ipv6=0
+    sysctl -q net.ipv6.conf.all.disable_ipv6=0
+    sysctl -q net.ipv6.conf.default.forwarding=1
+    sysctl -q net.ipv6.conf.all.forwarding=1
+    sysctl -q net.ipv6.conf.default.accept_ra=2
+    sysctl -q net.ipv6.conf.all.accept_ra=2
+
+    IPV6_NET=${1:-fd$(get_random_prefix)::/64}
+    launch_tunslip6
+    launch_radvd $IPV6_NET
+    launch_last_process
+}
+
 run_auto()
 {
     HAVE_IPV6=
@@ -270,6 +288,9 @@ case "$1" in
         ;;
     proxy)
         run_proxy
+        ;;
+    subnet)
+        run_subnet $2
         ;;
     *)
         print_usage $0
