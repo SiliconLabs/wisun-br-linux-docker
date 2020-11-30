@@ -153,15 +153,12 @@ run_local()
 {
     sysctl -q net.ipv6.conf.default.disable_ipv6=0
     sysctl -q net.ipv6.conf.all.disable_ipv6=0
-    sysctl -q net.ipv6.conf.default.forwarding=1
-    sysctl -q net.ipv6.conf.all.forwarding=1
     sysctl -q net.ipv6.conf.default.accept_ra=2
     sysctl -q net.ipv6.conf.all.accept_ra=2
 
-    launch_tunslip6 fd01::1/64
-    # tunslip6 add this address but it is useless
-    ip addr del dev tun0 fe80::1/64
-    launch_radvd ::/64
+    SITE_PREFIX=$(get_random_prefix)
+    launch_tunslip6 fd$SITE_PREFIX::1/64
+    launch_radvd fd$SITE_PREFIX::/64
     launch_last_process
 }
 
