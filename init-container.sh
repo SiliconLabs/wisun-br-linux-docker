@@ -87,7 +87,7 @@ launch_radvd()
     IPV6_NET=$1
 
     echo " ---> [1mLaunch radvd on $IPV6_NET[0m"
-cat << EOF > /etc/radvd.conf
+    cat << EOF > /etc/radvd.conf
 interface tun0 {
     AdvSendAdvert on;
     IgnoreIfMissing on;
