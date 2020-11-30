@@ -106,6 +106,8 @@ EOF
 
 launch_last_process()
 {
+    echo " ---> [1mResult of 'ip -6 addr':[0m"
+    ip -6 addr
     if [ "$LAUNCH_SHELL" ]; then
         echo " ---> [1mLaunch sh[0m"
         echo "Note: \"docker exec -it <CONTAINER> sh\" is a better alternative"
