@@ -85,16 +85,33 @@ launch_tunslip6()
 launch_radvd()
 {
     IPV6_NET=$1
+    EXT_BEHAVIOR=$2
 
     echo " ---> [1mLaunch radvd on $IPV6_NET[0m"
     cat << EOF > /etc/radvd.conf
 interface tun0 {
     AdvSendAdvert on;
     IgnoreIfMissing on;
-    prefix $IPV6_NET {
+    prefix $IPV6_NET { };
+};
+EOF
+    case "$EXT_BEHAVIOR" in
+        adv_prefix)
+            cat << EOF >> /etc/radvd.conf
+interface eth0 {
+    AdvSendAdvert on;
+    AdvDefaultLifetime 0;
+    prefix $IPV6_NET { };
     };
 };
 EOF
+            ;;
+        "")
+            ;;
+        *)
+            die "internal error: unknown options: $EXT_BEHAVIOR"
+            ;;
+    esac
     radvd --logmethod stderr
 }
 
