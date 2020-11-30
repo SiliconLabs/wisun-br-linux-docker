@@ -23,10 +23,17 @@ print_usage()
 Usage: $1 [OPTIONS] [MODE]
 
 Options:
-  -d, --device=DEVICE  UART device to use (default: /dev/ttyACM0)
-  -D, --dhcp           Configure IPv4 using DHCP
-  -s, --shell          Launch a shell on launch
-  -h, --help           Show this help
+  -d, --device=DEVICE UART device to use (default: /dev/ttyACM0).
+  -D, --dhcp          Configure IPv4 using DHCP. Use it if you rely on a
+                      network interface with macvlan driver.
+  -r, --advert-route  Advertise the new route on eth0. Only work with the subnet
+                      mode. Most of the hosts won't accept le route unless the
+                      parameter accept_ra_rt_info_max_plen is at least the size
+                      of the advertised prefix size. You may use it if the
+                      router of your network is not able manage the new route
+                      itself.
+  -s, --shell         Launch a shell on startup.
+  -h, --help          Show this help.
 
 Modes:
   local           The nodes will be only able to communicate with the docker
@@ -112,6 +119,16 @@ interface eth0 {
     AdvSendAdvert on;
     AdvDefaultLifetime 0;
     prefix $IPV6_NET { };
+};
+EOF
+            ;;
+        adv_route)
+            cat << EOF >> /etc/radvd.conf
+interface eth0 {
+    AdvSendAdvert on;
+    AdvDefaultLifetime 0;
+    route $IPV6_NET {
+        AdvRouteLifetime 1800;
     };
 };
 EOF
@@ -223,7 +240,11 @@ run_subnet()
 
     IPV6_NET=${1:-fd$(get_random_prefix)::/64}
     launch_tunslip6
-    launch_radvd $IPV6_NET
+    if [ "$ADVERT_ROUTE" ]; then
+        launch_radvd $IPV6_NET adv_route
+    else
+        launch_radvd $IPV6_NET
+    fi
     launch_last_process
 }
 
@@ -245,7 +266,7 @@ run_auto()
 
 check_privilege
 
-OPTS=$(getopt -l device:,dhcp,shell,help -- d:Dsh "$@") || exit 1
+OPTS=$(getopt -l device:,dhcp,advert-route,shell,help -- d:Drsh "$@") || exit 1
 eval set -- "$OPTS"
 while true; do
     case "$1" in
@@ -259,6 +280,10 @@ while true; do
             ;;
         -d|--device)
             UART=$2
+            shift 2
+            ;;
+        -r|--advert-route)
+            ADVERT_ROUTE=1
             shift 2
             ;;
         -h|--help)
