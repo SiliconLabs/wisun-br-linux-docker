@@ -29,10 +29,17 @@ Options:
   -h, --help           Show this help
 
 Modes:
-  local    Only nodes to be configured and communicate with the docker instance.
-  proxy    Run a proxy allowing to communicate with local network
-  auto     Detect if a local IPv6 network is availabe and launch \`local' or
-           \`proxy' accordingly.
+  local      The nodes will be only able to communicate with the docker
+             instance using a random site-local prefix.
+  site_local Advertise a random site-local prefix and run a proxy. Local
+             workstations will retrieve an IPv6 address allowing them to
+             communicate with WiSun nodes.
+  proxy      Re-use the local IPv6 prefix to configure WiSun nodes.
+  auto       Detect if a local IPv6 network is availabe and launch
+             \`site_local' or \`proxy' accordingly.
+
+Note that random site-local prefixes are not routable (ie. you can't access
+outside with these).
 EOF
     [ "$2" ] && exit $2
 }
@@ -173,6 +180,22 @@ run_proxy()
     launch_last_process
 }
 
+run_site_local()
+{
+    sysctl -q net.ipv6.conf.default.disable_ipv6=0
+    sysctl -q net.ipv6.conf.all.disable_ipv6=0
+    sysctl -q net.ipv6.conf.default.forwarding=1
+    sysctl -q net.ipv6.conf.all.forwarding=1
+    sysctl -q net.ipv6.conf.default.accept_ra=2
+    sysctl -q net.ipv6.conf.all.accept_ra=2
+
+    SITE_PREFIX=$(get_random_prefix)
+    launch_tunslip6 fd$SITE_PREFIX::1/64
+    launch_radvd fd$SITE_PREFIX::/64 adv_prefix
+    launch_ndppd fd$SITE_PREFIX::/64
+    launch_last_process
+}
+
 run_local()
 {
     sysctl -q net.ipv6.conf.default.disable_ipv6=0
@@ -198,7 +221,7 @@ run_auto()
         run_proxy
     else
         echo " ---> [1mNo network found[0m"
-        run_local
+        run_site_local
     fi
 }
 
@@ -238,6 +261,9 @@ sysctl -q net.ipv6.conf.eth0.disable_ipv6=0
 case "$1" in
     auto|"")
         run_auto
+        ;;
+    site_local)
+        run_site_local
         ;;
     local)
         run_local
