@@ -117,7 +117,7 @@ Alternatively you can force a neighbor discovery on your WiSun node:
 
 ### WiSun can reach outside network, but can't reach docker host
 
-It is a limitation of the macvlan interface[1]. This situation is actually not
+It is a [limitation of the macvlan interface][1]. This situation is actually not
 an error — it is the defined behavior of macvtap. Due to the way in which the
 host's physical Ethernet is attached to the macvtap bridge, traffic into that
 bridge from the guests that is forwarded to the physical interface cannot be
@@ -151,7 +151,7 @@ restart the docker container if you unplug the gateway.
 
 When using the proxy, it takes a few seconds to establish connection the first
 time a end device try to access outside. The problem is [ndppd does not receive
-locally generated neighbor solicitation][1] (A). The system unlocks when a
+locally generated neighbor solicitation][2] (A). The system unlocks when a
 solicitation come from outside (B).
 
         tun0  2 1.806167960 2a01:e35:2435:66a0:20d:6fff:fe20:c096 → 2a00:1450:4007:809::200e ICMPv6 104 Echo (ping) request id=0x0001, seq=0, hop limit=63
@@ -170,7 +170,7 @@ solicitation come from outside (B).
 
 The subnet mode does not suffers of this limitation.
 
-[1]: https://github.com/DanielAdolfsson/ndppd/issues/69
+[2]: https://github.com/DanielAdolfsson/ndppd/issues/69
 
 Further improvements
 --------------------
@@ -193,7 +193,7 @@ Further improvements
 Similar projects
 ----------------
 
-[6lbr][2] has more or less the same goals than this project. It is has probably more
+[6lbr][3] has more or less the same goals than this project. It is has probably more
 features, but it is also far more complex:
 
-[2]: https://github.com/cetic/6lbr/wiki
+[3]: https://github.com/cetic/6lbr/wiki
