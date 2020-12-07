@@ -281,8 +281,6 @@ run_auto()
     fi
 }
 
-check_privilege
-
 OPTS=$(getopt -l device:,dhcp,advert-route,shell,help -- d:Drsh "$@") || exit 1
 eval set -- "$OPTS"
 while true; do
@@ -313,6 +311,8 @@ while true; do
             ;;
     esac
 done
+
+check_privilege
 
 sysctl -q net.ipv6.conf.eth0.accept_ra=2
 sysctl -q net.ipv6.conf.eth0.disable_ipv6=0
