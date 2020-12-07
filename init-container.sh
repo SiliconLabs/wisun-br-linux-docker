@@ -22,6 +22,8 @@ print_usage()
     cat << EOF >&2
 Usage: $1 [OPTIONS] [MODE]
 
+Setup the docker containter to create a WiSun Border Router.
+
 Options:
   -d, --device=DEVICE UART device to use (default: /dev/ttyACM0).
   -D, --dhcp          Configure IPv4 using DHCP. Use it if you rely on a
