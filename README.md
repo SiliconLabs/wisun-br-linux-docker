@@ -70,6 +70,15 @@ You may want to open a shell into the container:
 Bugs and limitations
 --------------------
 
+### I want to use this architecture for production
+
+By default, this docker uses a method called Neighbor Discovery Proxy (NDP
+Proxy). It works with most of IPv6 network topologies without touching the
+network infra. However, it does not scale very well and you may found
+limitations in corner cases. For production, prefer the subnet mode (aka Prefix
+Delegation) or even better use DHCPv6-PD protocol (not presented in this
+docker).
+
 ### I have no IPv6 network
 
 This project does not aim to provide IPv6 connectivity. If your ISP does not
@@ -78,6 +87,12 @@ provide IPv6, you can either:
   - get an equipment providing IPv6 through NAT64 or 6to4
   - get an equipment advertising a site-local IPv6 prefix (eg. fd01::/64). You
     can do that using radvd with any standard Linux.
+
+### The container does not detect my IPv6 network
+
+The container relies on Router Advertisements. If your network use DHCPv6, or
+does not have Router Advertisement for any reason, the container won't detect
+the network.
 
 ### Cannot reach (IPv4) internet from the container
 
@@ -127,16 +142,58 @@ as soon as you use  Windows Subsystem for Linux (WSL2) and the USB-UART of the
 WiSun BR is handled WSL2. In other words, you should see  /dev/ttyUSB0 on your
 WSL2.
 
+### I have re-plugged the serial interface and nothing work anymore
+
+The docker container does not (yet) support device hot-plugging. You have to
+restart the docker container if you unplug the gateway.
+
+### When I try to ping from my WiSun Device, the reply is transmitted after 5s of latency
+
+When using the proxy, it takes a few seconds to establish connection the first
+time a end device try to access outside. The problem is [ndppd does not receive
+locally generated neighbor solicitation][1] (A). The system unlocks when a
+solicitation come from outside (B).
+
+        tun0  2 1.806167960 2a01:e35:2435:66a0:20d:6fff:fe20:c096 → 2a00:1450:4007:809::200e ICMPv6 104 Echo (ping) request id=0x0001, seq=0, hop limit=63
+        eth0  1 0.000000000 2a01:e35:2435:66a0:20d:6fff:fe20:c096 → 2a00:1450:4007:809::200e ICMPv6 118 Echo (ping) request id=0x0001, seq=0, hop limit=62
+        eth0  2 0.007452561 2a00:1450:4007:809::200e → 2a01:e35:2435:66a0:20d:6fff:fe20:c096 ICMPv6 118 Echo (ping) reply id=0x0001, seq=0, hop limit=118 (request in 1)
+    (A) eth0  3 0.007558306 fe80::42:acff:fe13:2 → ff02::1:ff20:c096 ICMPv6 86 Neighbor Solicitation for 2a01:e35:2435:66a0:20d:6fff:fe20:c096 from 02:42:ac:13:00:02
+    (A) eth0  4 1.016063581 fe80::42:acff:fe13:2 → ff02::1:ff20:c096 ICMPv6 86 Neighbor Solicitation for 2a01:e35:2435:66a0:20d:6fff:fe20:c096 from 02:42:ac:13:00:02
+    (A) eth0  5 2.039971376 fe80::42:acff:fe13:2 → ff02::1:ff20:c096 ICMPv6 86 Neighbor Solicitation for 2a01:e35:2435:66a0:20d:6fff:fe20:c096 from 02:42:ac:13:00:02
+        eth0  6 3.060057826 2a01:e35:2435:66a0:42:acff:fe13:2 → 2a00:1450:4007:809::200e ICMPv6 166 Destination Unreachable (Address unreachable)
+    (B) eth0  7 5.043717586 fe80::224:d4ff:fea3:4493 → 2a01:e35:2435:66a0:20d:6fff:fe20:c096 ICMPv6 86 Neighbor Solicitation for 2a01:e35:2435:66a0:20d:6fff:fe20:c096 from 00:24:d4:a3:44:93
+        eth0  8 5.043761372 fe80::42:acff:fe13:2 → fe80::224:d4ff:fea3:4493 ICMPv6 174 Redirect
+        eth0  9 5.043782371 fe80::42:acff:fe13:2 → ff02::1:ff20:c096 ICMPv6 86 Neighbor Solicitation for 2a01:e35:2435:66a0:20d:6fff:fe20:c096 from 02:42:ac:13:00:02
+    (B) tun0  3 6.850276506 fe80::10c3:41bf:aa66:69a3 → ff02::1:ff20:c096 ICMPv6 72 Neighbor Solicitation for 2a01:e35:2435:66a0:20d:6fff:fe20:c096 from 00:00:00:00:00:00
+        tun0  4 6.870837671 fe80::202:f7ff:fef0:0 → fe80::10c3:41bf:aa66:69a3 ICMPv6 72 Neighbor Advertisement 2a01:e35:2435:66a0:20d:6fff:fe20:c096 (sol) is at 00:02:f7:f0:00:00
+        eth0 10 5.067321429 fe80::42:acff:fe13:2 → fe80::224:d4ff:fea3:4493 ICMPv6 86 Neighbor Advertisement 2a01:e35:2435:66a0:20d:6fff:fe20:c096 (rtr, sol) is at 02:42:ac:13:00:02
+
+The subnet mode does not suffers of this limitation.
+
+[1]: https://github.com/DanielAdolfsson/ndppd/issues/69
 
 Further improvements
 --------------------
 
 - tunslip6 should be able to daemonize
 
-- replace radvd with a small RS/RA proxy. nd-proxy.c seems to mostly do the job,
+- Replace radvd with a small RS/RA proxy. nd-proxy.c seems to mostly do the job,
   but:
 
    1. for an unknown reason, it does not receive RS from tun0 and do not send RA
       to tun0 (while radvd is able to do that very well)
    2. it is written in C++
 
+- Provide an example of Prefix Delegation and DHCPv6-PD
+
+- Check if it works with DHCPv6 instead of RA
+
+- Docker does not yet support '--ipam-driver=dhcp --ipam-opt dhcp_interface=eth0'
+
+Similar projects
+----------------
+
+[6lbr][2] has more or less the same goals than this project. It is has probably more
+features, but it is also far more complex:
+
+[2]: https://github.com/cetic/6lbr/wiki
