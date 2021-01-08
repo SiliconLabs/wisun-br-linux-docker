@@ -26,7 +26,7 @@ A pre-build image is not (yet) available. You have to build an image yourself.
 
 Install docker:
 
-    sudo apt-get install docker-io
+    sudo apt-get install docker.io
 
 Ensure that your current user is allowed to run docker (you will have to log out
 and back in for this to take effect!):
