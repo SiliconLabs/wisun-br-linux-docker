@@ -1,10 +1,10 @@
 WiSun Border router
 ===================
 
-A WiSun Border Router (BR) allow to connect a WiSun network to internet. The
-firmware WinSun BR for EFR32 is able to make most of this job. However, EFR32
-only provide a Slip (Serial Line Internet Protocol) connectivity. This
-repository link the Slip connection to the rest of the network.
+A WiSun Border Router (BR) allows to connect a WiSun network to internet. The
+WinSun BR firmware for EFR32 is able to make most of this job. However, EFR32
+only provides a Slip (Serial Line Internet Protocol) connectivity. This
+repository links the Slip connection to the rest of the network.
 
 To simplify the deployment, all the work is done inside a Docker container. It
 aims to run on a Raspberry Pi, but it should work on any Linux host and even on
@@ -16,13 +16,13 @@ as a serial (UART) connection.
 Use of a network with IPv6 connectivity is encouraged. If IPv6 is not
 available, the docker image will automatically switch to "local" mode. In local
 mode, the container and the WiSun nodes are able to reach themselves, but
-communication with outside is not possible. See also [Bugs and
+communication with the outside is not possible. See also [Bugs and
 limitations](#bugs-and-limitations).
 
 Installation
 ------------
 
-Pre-build image is not (yet) available. You have to build image yourself.
+A pre-build image is not (yet) available. You have to build an image yourself.
 
 Install docker:
 
@@ -37,15 +37,15 @@ Go to this repository and build the image with:
 
     docker build -t wisun-img .
 
-You may to save a bit of bytes by removing the build environment and only
+You may save a bit of bytes by removing the build environment and only
 keeping the final image:
 
     docker image prune
 
-If you have a IPv6 network, create a macvlan interface to leverage it (replace
+If you have an IPv6 network, create a macvlan interface to leverage it (replace
 `eth0` by the name of you physical network interface):
 
-    docker network create -d macvlan -o parent=eth0 winsun-net
+    docker network create -d macvlan -o parent=eth0 wisun-net
 
 Launch image
 ------------
@@ -57,9 +57,9 @@ Launch a shell in your image using:
 
     docker run -ti --privileged --network=wisun-net --name=wisun-vm wisun-img
 
-From now, you WiSun nodes should be able to interact with your IPv6 network.
+From now on, your WiSun nodes should be able to interact with your IPv6 network.
 
-Note that the container accept a few options, you can get the list with:
+Note that the container accepts a few options which you can list with:
 
     docker run -ti --privileged --rm wisun-img --help
 
@@ -73,11 +73,10 @@ Bugs and limitations
 ### I want to use this architecture for production
 
 By default, this docker uses a method called Neighbor Discovery Proxy (NDP
-Proxy). It works with most of IPv6 network topologies without touching the
-network infra. However, it does not scale very well and you may found
-limitations in corner cases. For production, prefer the subnet mode (aka Prefix
-Delegation) or even better use DHCPv6-PD protocol (not presented in this
-docker).
+Proxy). It works with most IPv6 network topologies without touching the network
+infra.  However, it does not scale very well and you may find limitations in
+corner cases. For production, prefer the subnet mode (aka Prefix Delegation) or
+even better use DHCPv6-PD protocol (not presented in this docker).
 
 ### I have no IPv6 network
 
@@ -104,9 +103,9 @@ run a DHCP client:
 
 ### I have restarted my docker image and I can't ping my WiSun device anymore
 
-The proxy create necessary routes when it receive a Neighbor Solicitation. Your
-host has probably cached this information. The easiest way to fix that is to
-flush the neighbor information of your host with:
+The proxy creates the necessary routes when it receives a Neighbor Solicitation.
+Your host has probably cached this information. The easiest way to fix that is
+to flush the neighbor information of your host with:
 
     ip -6 neigh flush dev eth0
 
@@ -125,8 +124,8 @@ bounced back up to the host's IP stack. Additionally, traffic from the host's IP
 stack that is sent to the physical interface cannot be bounced back up to the
 macvtap bridge for forwarding to the guests.
 
-There is several ways to workaround the problem. The easiest way probably is to
-use a secondary physical network interface exclusively for the guest.
+There are several ways to work around the problem. The easiest way probably is
+to use a secondary physical network interface exclusively for the guest.
 
     dhcpcd --release eth1
     docker network create -d macvlan -o parent=eth1 wisun-net
@@ -137,12 +136,12 @@ use a secondary physical network interface exclusively for the guest.
 
 ### Unable to launch the container on my Windows workstation
 
-This project have not yet been tested on windows hosts. It seems it should work
-as soon as you use  Windows Subsystem for Linux (WSL2) and the USB-UART of the
-WiSun BR is handled WSL2. In other words, you should see  /dev/ttyUSB0 on your
+This project has not yet been tested on windows hosts. It seems it should work
+as soon as you use Windows Subsystem for Linux (WSL2) and the USB-UART of the
+WiSun BR is handled by WSL2. In other words, you should see /dev/ttyUSB0 on your
 WSL2.
 
-### I have re-plugged the serial interface and nothing work anymore
+### I have re-plugged the serial interface and nothings work anymore
 
 The docker container does not (yet) support device hot-plugging. You have to
 restart the docker container if you unplug the gateway.
@@ -150,9 +149,9 @@ restart the docker container if you unplug the gateway.
 ### When I try to ping from my WiSun Device, the reply is transmitted after 5s of latency
 
 When using the proxy, it takes a few seconds to establish connection the first
-time a end device try to access outside. The problem is [ndppd does not receive
-locally generated neighbor solicitation][2] (A). The system unlocks when a
-solicitation come from outside (B).
+time a end device tries to access the outside. The problem is [ndppd does not
+receive locally generated neighbor solicitation][2] (A). The system unlocks when
+a solicitation comes from outside (B).
 
         tun0  2 1.806167960 2a01:e35:2435:66a0:20d:6fff:fe20:c096 → 2a00:1450:4007:809::200e ICMPv6 104 Echo (ping) request id=0x0001, seq=0, hop limit=63
         eth0  1 0.000000000 2a01:e35:2435:66a0:20d:6fff:fe20:c096 → 2a00:1450:4007:809::200e ICMPv6 118 Echo (ping) request id=0x0001, seq=0, hop limit=62
@@ -180,8 +179,8 @@ Further improvements
 - Replace radvd with a small RS/RA proxy. nd-proxy.c seems to mostly do the job,
   but:
 
-   1. for an unknown reason, it does not receive RS from tun0 and do not send RA
-      to tun0 (while radvd is able to do that very well)
+   1. for an unknown reason, it does not receive RS from tun0 and does not send
+      RA to tun0 (while radvd is able to do that very well)
    2. it is written in C++
 
 - Provide an example of Prefix Delegation and DHCPv6-PD
@@ -193,7 +192,7 @@ Further improvements
 Similar projects
 ----------------
 
-[6lbr][3] has more or less the same goals than this project. It is has probably more
-features, but it is also far more complex:
+[6lbr][3] has more or less the same goals than this project. It has probably
+more features, but it is also far more complex.
 
 [3]: https://github.com/cetic/6lbr/wiki
