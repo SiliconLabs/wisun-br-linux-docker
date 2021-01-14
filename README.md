@@ -1,7 +1,7 @@
-WiSun Border router
-===================
+Wi-SUN Border router
+====================
 
-A WiSun Border Router (BR) allows to connect a WiSun network to internet. The
+A Wi-SUN Border Router (BR) allows to connect a Wi-SUN network to internet. The
 WinSun BR firmware for EFR32 is able to make most of this job. However, EFR32
 only provides a Slip (Serial Line Internet Protocol) connectivity. This
 repository links the Slip connection to the rest of the network.
@@ -10,12 +10,12 @@ To simplify the deployment, all the work is done inside a Docker container. It
 aims to run on a Raspberry Pi, but it should work on any Linux host and even on
 Windows.
 
-The WiSun BR has to be connected to the host using USB. The docker will see it
+The Wi-SUN BR has to be connected to the host using USB. The docker will see it
 as a serial (UART) connection.
 
 Use of a network with IPv6 connectivity is encouraged. If IPv6 is not
 available, the docker image will automatically switch to "local" mode. In local
-mode, the container and the WiSun nodes are able to reach themselves, but
+mode, the container and the Wi-SUN nodes are able to reach themselves, but
 communication with the outside is not possible. See also [Bugs and
 limitations](#bugs-and-limitations).
 
@@ -50,14 +50,15 @@ If you have an IPv6 network, create a macvlan interface to leverage it (replace
 Launch image
 ------------
 
-Check that the WiSun BR device is available on `/dev/ttyACM0` (or pass the
-correct device name to the guest with `-s`).
+Check that the Wi-SUN BR device is available on `/dev/ttyACM0` (or pass the
+correct device name to the guest with `-d`).
 
 Launch a shell in your image using:
 
     docker run -ti --privileged --network=wisun-net --name=wisun-vm wisun-img
 
-From now on, your WiSun nodes should be able to interact with your IPv6 network.
+From now on, your Wi-SUN nodes should be able to interact with your IPv6
+network.
 
 Note that the container accepts a few options which you can list with:
 
@@ -101,7 +102,7 @@ run a DHCP client:
 
     docker run -ti --privileged --network=wisun-net wisun-br -D
 
-### I have restarted my docker image and I can't ping my WiSun device anymore
+### I have restarted my docker image and I can't ping my Wi-SUN device anymore
 
 The proxy creates the necessary routes when it receives a Neighbor Solicitation.
 Your host has probably cached this information. The easiest way to fix that is
@@ -109,12 +110,12 @@ to flush the neighbor information of your host with:
 
     ip -6 neigh flush dev eth0
 
-Alternatively you can force a neighbor discovery on your WiSun node:
+Alternatively you can force a neighbor discovery on your Wi-SUN node:
 
     ndisc6 2a01:e35:2435:66a0:202:f7ff:fef0:0 eth0
 
 
-### WiSun can reach outside network, but can't reach docker host
+### Wi-SUN can reach outside network, but can't reach docker host
 
 It is a [limitation of the macvlan interface][1]. This situation is actually not
 an error — it is the defined behavior of macvtap. Due to the way in which the
@@ -138,7 +139,7 @@ to use a secondary physical network interface exclusively for the guest.
 
 This project has not yet been tested on windows hosts. It seems it should work
 as soon as you use Windows Subsystem for Linux (WSL2) and the USB-UART of the
-WiSun BR is handled by WSL2. In other words, you should see /dev/ttyUSB0 on your
+Wi-SUN BR is handled by WSL2. In other words, you should see /dev/ttyUSB0 on
 WSL2.
 
 ### I have re-plugged the serial interface and nothings work anymore
@@ -146,7 +147,7 @@ WSL2.
 The docker container does not (yet) support device hot-plugging. You have to
 restart the docker container if you unplug the gateway.
 
-### When I try to ping from my WiSun Device, the reply is transmitted after 5s of latency
+### When I try to ping from my Wi-SUN Device, the reply is transmitted after 5s of latency
 
 When using the proxy, it takes a few seconds to establish connection the first
 time a end device tries to access the outside. The problem is [ndppd does not
