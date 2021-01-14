@@ -213,7 +213,7 @@ run_proxy()
     IPV6_NET=$(rdisc6 -r 5 -w 300 -q -1 eth0)
     [ "$IPV6_NET" ] || die "Failed to get IPv6 address"
 
-    launch_tunslip6
+    launch_tunslip6 $IPV6_NET
     launch_radvd $IPV6_NET
     launch_ndppd $IPV6_NET
     launch_last_process
