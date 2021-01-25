@@ -22,17 +22,17 @@ print_usage()
     cat << EOF >&2
 Usage: $1 [OPTIONS] [MODE]
 
-Setup the docker containter to create a WiSun Border Router.
+Setup the docker container to create a WiSun Border Router.
 
 Options:
   -d, --device=DEVICE UART device to use (default: /dev/ttyACM0).
   -D, --dhcp          Configure IPv4 using DHCP. Use it if you rely on a
                       network interface with macvlan driver.
-  -r, --advert-route  Advertise the new route on eth0. Only work with the subnet
+  -r, --advert-route  Advertise the new route on eth0. Only works with the subnet
                       mode. Most of the hosts won't accept le route unless the
                       parameter accept_ra_rt_info_max_plen is at least the size
                       of the advertised prefix size. You may use it if the
-                      router of your network is not able manage the new route
+                      router of your network is not able to manage the new route
                       itself.
   -s, --shell         Launch a shell on startup.
   -h, --help          Show this help.
@@ -47,7 +47,7 @@ Modes:
   subnet [PREFIX] Use PREFIX to configure WiSun nodes. PREFIX should come from
                   configuration of the parent router. If PREFIX is not defined,
                   generate a random site-local one.
-  auto            Detect if a local IPv6 network is availabe and launch
+  auto            Detect if a local IPv6 network is available and launch
                   \`site_local' or \`proxy' accordingly.
 
 Note that random site-local prefixes are not routable (ie. you can't access
