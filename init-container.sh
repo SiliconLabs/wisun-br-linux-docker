@@ -22,7 +22,7 @@ print_usage()
     cat << EOF >&2
 Usage: $1 [OPTIONS] [MODE]
 
-Setup the docker container to create a WiSun Border Router.
+Setup the docker container to create a Wi-SUN Border Router.
 
 Options:
   -d, --device=DEVICE UART device to use (default: /dev/ttyACM0).
@@ -42,9 +42,9 @@ Modes:
                   instance using a random site-local prefix.
   site_local      Advertise a random site-local prefix and run a proxy. Local
                   workstations will retrieve an IPv6 address allowing them to
-                  communicate with WiSun nodes.
-  proxy           Re-use the local IPv6 prefix to configure WiSun nodes.
-  subnet [PREFIX] Use PREFIX to configure WiSun nodes. PREFIX should come from
+                  communicate with Wi-SUN nodes.
+  proxy           Re-use the local IPv6 prefix to configure Wi-SUN nodes.
+  subnet [PREFIX] Use PREFIX to configure Wi-SUN nodes. PREFIX should come from
                   configuration of the parent router. If PREFIX is not defined,
                   generate a random site-local one.
   auto            Detect if a local IPv6 network is available and launch
@@ -55,7 +55,7 @@ outside with these).
 
 Examples:
 
-  Provide minimal infrastructure to configure WiSun device through a Border
+  Provide minimal infrastructure to configure Wi-SUN device through a Border
   Router connected on /dev/ttyUSB0:
 
     $1 -d /dev/ttyUSB0 local
