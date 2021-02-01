@@ -9,6 +9,7 @@
 # turn on bash's job control
 set -m
 
+TUNSLIP6_PID=-1
 UART=/dev/ttyACM0
 
 die()
@@ -103,6 +104,7 @@ launch_tunslip6()
 
     echo " ---> [1mLaunch tunslip6 on $UART[0m"
     tunslip6 -s $UART -B 115200 $IPV6_IP &
+    TUNSLIP6_PID=$!
     for i in $(seq 10); do
         ip -6 addr show tun0 | grep -q $IPV6_IP && break
         sleep 0.2
@@ -193,7 +195,8 @@ launch_last_process()
         echo "Note: \"docker exec -it <CONTAINER> sh\" is a better alternative"
         exec sh
     else
-        tail -f /dev/null
+        wait $TUNSLIP6_PID
+        echo " ---> [1mWi-SUN border router has disappeared[0m"
     fi
 }
 
