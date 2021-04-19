@@ -210,7 +210,7 @@ run_proxy()
         ip -6 addr show eth0 | grep -q global && break
         sleep 0.2
     done
-    IPV6_NET=$(rdisc6 -r 5 -w 300 -q -1 eth0)
+    IPV6_NET=$(rdisc6 -r 10 -w 400 -q -1 eth0)
     [ "$IPV6_NET" ] || die "Failed to get IPv6 address"
 
     launch_tunslip6 $IPV6_NET
