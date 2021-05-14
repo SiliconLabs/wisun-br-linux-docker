@@ -18,6 +18,7 @@ RUN mkdir -p /run/radvd
 RUN apk add --no-cache radvd
 RUN apk add --no-cache ndisc6
 RUN apk add --no-cache libstdc++
+RUN apk add --no-cache tshark
 COPY --from=builder /usr/local /usr/local
 COPY init-container.sh /init
 
