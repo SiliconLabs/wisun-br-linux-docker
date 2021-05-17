@@ -35,6 +35,7 @@
  /* Below define allows importing saved output into Wireshark as "Raw IP" packet type */
 #define WIRESHARK_IMPORT_FORMAT 1
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -761,6 +762,7 @@ main(int argc, char **argv)
   int baudrate = -2;
   int ipa_enable = 0;
   int tap = 0;
+  bool rcp_is_alive = false;
   slipfd = 0;
 
   prog = argv[0];
@@ -964,7 +966,6 @@ exit(1);
       }
     }
     if (timestamp) stamptime();
-    fprintf(stderr, "********SLIP started on ``/dev/%s''\n", siodev);
     stty_telos(slipfd);
   }
   slip_send(slipfd, SLIP_END);
@@ -1017,6 +1018,10 @@ exit(1);
       err(1, "select");
     } else if(ret > 0) {
       if(FD_ISSET(slipfd, &rset)) {
+        if (!rcp_is_alive) {
+            fprintf(stderr, "SLIP device on ``/dev/%s'' is alive\n", siodev);
+            rcp_is_alive = true;
+        }
         serial_to_tun(inslip, tunfd);
       }
 
