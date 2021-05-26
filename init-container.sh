@@ -6,8 +6,7 @@
 # Main authors:
 #     - Jérôme Pouiller <jerome.pouiller@silabs.com>
 #
-# turn on bash's job control
-set -m
+set +m
 
 TUNSLIP6_PID=-1
 UART=/dev/ttyACM0
@@ -203,8 +202,12 @@ launch_last_process()
     echo " ---> [1mResult of 'ip -6 addr':[0m"
     ip -6 addr
     if [ "$LAUNCH_SHELL" ]; then
+        if tty > /dev/nul 2> /dev/null; then
+            set -m
+        else
+            echo "Cannot get tty (missing -t in docker command line?)"
+        fi
         echo " ---> [1mLaunch sh[0m"
-        echo "Note: \"docker exec -it <CONTAINER> sh\" is a better alternative"
         exec sh
     else
         wait $TUNSLIP6_PID

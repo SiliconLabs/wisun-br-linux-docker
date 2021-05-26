@@ -130,6 +130,7 @@ to use a secondary physical network interface exclusively for the guest.
 
     dhcpcd --release eth1
     docker network create -d macvlan -o parent=eth1 wisun-net
+    ip link set dev eth1 up
     docker run -ti --privileged --network=wisun-net wisun-br
 
 
