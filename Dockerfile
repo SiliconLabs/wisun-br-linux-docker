@@ -19,6 +19,7 @@ RUN apk add --no-cache radvd
 RUN apk add --no-cache ndisc6
 RUN apk add --no-cache libstdc++
 RUN apk add --no-cache tshark
+RUN apk add --no-cache openocd
 COPY --from=builder /usr/local /usr/local
 COPY init-container.sh /init
 
