@@ -24,7 +24,7 @@ Usage: $1 [OPTIONS] [MODE]
 
 Setup the docker container to create a Wi-SUN Border Router.
 
-Options:
+Container options:
   -d, --device=DEVICE UART device to use (default: /dev/ttyACM0).
   -D, --dhcp          Configure IPv4 using DHCP. Use it if you rely on a
                       network interface with macvlan driver.
@@ -36,6 +36,17 @@ Options:
                       itself.
   -s, --shell         Launch a shell on startup.
   -h, --help          Show this help.
+
+Wi-SUN options:
+  -n, --ws-network=NAME Set Wi-SUN network name.
+  -C, --ws-domain=CC    Set Wi-SUN regulatory domain. Valid values: WW, EU, NA,
+                        JP, ...).
+  -m, --ws-mode=HEX     Set operating mode. Valid values: 1a, 1b, 2a, 2b, 3, 4a,
+                        4b and 5.
+  -c, --ws-class=NUM    Set operating class. Valid values: 1, 2 or 3.
+
+  These parameters are automatically saved in the radio board. If a parameter is
+  not specified, the radio board value is used.
 
 Modes:
   local           The nodes will be only able to communicate with the docker
@@ -215,6 +226,50 @@ launch_last_process()
     fi
 }
 
+jlink_rtt_run()
+{
+    echo "run \"$*\" on radio board"
+    echo "$*" | nc 127.0.0.1 1001
+}
+
+jlink_run()
+{
+    echo "run \"$*\" on JLink probe"
+    echo "$*" | nc 127.0.0.1 1002 > /dev/null
+}
+
+launch_openocd()
+{
+    IS_MANDATORY=$1
+    cat << 'EOF' > /tmp/openocd-rtt.cfg
+rtt setup 0x20001c00 0x04000 "SEGGER RTT"
+rtt server start 1001 0
+telnet_port 1002
+gdb_port 1003
+tcl_port 1004
+init
+rtt start
+EOF
+    echo " ---> [1mLaunch OpenOCD[0m"
+    openocd -d0 -f board/efm32.cfg -f /tmp/openocd-rtt.cfg &
+    OPENOCD_PID=$!
+    sleep 1
+    if [ ! -d /proc/$OPENOCD_PID ]; then
+        if [ -z "$IS_MANDATORY" ]; then
+            echo "Failed to connect to JLink probe"
+            return
+        fi
+        die "Cannot connect to JLink probe"
+    fi
+    [ "$WS_DOMAIN" ]    && jlink_rtt_run "wisun set wisun.regulatory_domain $WS_DOMAIN"
+    [ "$WS_CLASS" ]     && jlink_rtt_run "wisun set wisun.operating_class $WS_CLASS"
+    [ "$WS_MODE" ]      && jlink_rtt_run "wisun set wisun.operating_mode $WS_MODE"
+    [ "$WS_NETWORK" ]   && jlink_rtt_run "wisun set wisun.network_name $WS_NETWORK"
+    [ "$IS_MANDATORY" ] && jlink_rtt_run "wisun save"
+    sleep 0.5
+    [ "$IS_MANDATORY" ] && jlink_run "reset run"
+}
+
 run_proxy()
 {
     sysctl -q net.ipv6.conf.default.disable_ipv6=0
@@ -305,7 +360,7 @@ run_auto()
     fi
 }
 
-OPTS=$(getopt -l device:,dhcp,advert-route,shell,help -- d:Drsh "$@") || exit 1
+OPTS=$(getopt -l shell,dhcp,device:,advert-route,ws-network:,ws-domain:,ws-mode:,ws-class:,help -- sDd:rn:C:m:c:h "$@") || exit 1
 eval set -- "$OPTS"
 while true; do
     case "$1" in
@@ -325,6 +380,26 @@ while true; do
             ADVERT_ROUTE=1
             shift 2
             ;;
+        -n|--ws-network)
+            WS_NETWORK=$2
+            MANDATORY_OPENOCD=1
+            shift 2
+            ;;
+        -C|--ws-domain)
+            WS_DOMAIN=$2
+            MANDATORY_OPENOCD=1
+            shift 2
+            ;;
+        -m|--ws-mode)
+            WS_MODE=$2
+            MANDATORY_OPENOCD=1
+            shift 2
+            ;;
+        -c|--ws-class)
+            WS_CLASS=$2
+            MANDATORY_OPENOCD=1
+            shift 2
+            ;;
         -h|--help)
             print_usage $0
             exit 0
@@ -341,6 +416,7 @@ check_privilege
 sysctl -q net.ipv6.conf.eth0.accept_ra=2
 sysctl -q net.ipv6.conf.eth0.disable_ipv6=0
 [ "$LAUNCH_DHCPC" ] && launch_dhcpc
+launch_openocd $MANDATORY_OPENOCD
 
 case "$1" in
     auto|"")
