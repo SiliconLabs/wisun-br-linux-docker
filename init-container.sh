@@ -34,6 +34,7 @@ Container options:
                       of the advertised prefix size. You may use it if the
                       router of your network is not able to manage the new route
                       itself.
+  -F, --flash=FW_PATH Flash radio board with FW_PATH.
   -s, --shell         Launch a shell on startup.
   -h, --help          Show this help.
 
@@ -261,6 +262,8 @@ EOF
         fi
         die "Cannot connect to JLink probe"
     fi
+    [ -z "$WS_FIRMWARE" -o -e "$WS_FIRMWARE" ] || die "'$WS_FIRMWARE' not found (missing -v in docker command?)"
+    [ "$WS_FIRMWARE" ]  && jlink_run "program $WS_FIRMWARE 0 reset"
     [ "$WS_DOMAIN" ]    && jlink_rtt_run "wisun set wisun.regulatory_domain $WS_DOMAIN"
     [ "$WS_CLASS" ]     && jlink_rtt_run "wisun set wisun.operating_class $WS_CLASS"
     [ "$WS_MODE" ]      && jlink_rtt_run "wisun set wisun.operating_mode $WS_MODE"
@@ -361,7 +364,7 @@ run_auto()
     fi
 }
 
-OPTS=$(getopt -l shell,dhcp,device:,advert-route,ws-network:,ws-domain:,ws-mode:,ws-class:,help -- sDd:rn:C:m:c:h "$@") || exit 1
+OPTS=$(getopt -l shell,dhcp,device:,advert-route,flash:,ws-network:,ws-domain:,ws-mode:,ws-class:,help -- sDd:rF:n:C:m:c:h "$@") || exit 1
 eval set -- "$OPTS"
 while true; do
     case "$1" in
@@ -379,6 +382,11 @@ while true; do
             ;;
         -r|--advert-route)
             ADVERT_ROUTE=1
+            shift 2
+            ;;
+        -F|--flash)
+            WS_FIRMWARE=$2
+            MANDATORY_OPENOCD=1
             shift 2
             ;;
         -n|--ws-network)
