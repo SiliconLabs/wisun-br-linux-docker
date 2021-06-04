@@ -268,6 +268,7 @@ EOF
     [ "$IS_MANDATORY" ] && jlink_rtt_run "wisun save"
     sleep 0.5
     [ "$IS_MANDATORY" ] && jlink_run "reset run"
+    echo "You can get the log with \"telnet 127.0.0.1 1001\""
 }
 
 run_proxy()
