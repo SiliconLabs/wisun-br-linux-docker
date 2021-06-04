@@ -15,6 +15,8 @@ apk add git libtool autoconf automake pkgconf libusb-dev
 git clone --quiet -b v0.11.0 https://github.com/ntfreak/openocd.git ./openocd
 git -C ./openocd submodule update --init --recursive
 (cd ./openocd && ./bootstrap)
-(cd ./openocd && ./configure --enable-jlink)
-make -C ./openocd -j $(nproc)
-make -C ./openocd install
+# Build out-of-source else OpenOCD version will display 'x.x.x-dirty'
+mkdir openocd-build
+(cd ./openocd-build && ../openocd/configure --enable-jlink)
+make -C ./openocd-build -j $(nproc)
+make -C ./openocd-build install
