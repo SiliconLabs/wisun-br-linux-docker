@@ -34,7 +34,7 @@ Container options:
                       of the advertised prefix size. You may use it if the
                       router of your network is not able to manage the new route
                       itself.
-  -F, --flash=FW_PATH Flash radio board with FW_PATH.
+  -F, --flash[=FILE]  Flash radio board with FILE (default: built-in firmware).
   -s, --shell         Launch a shell on startup.
   -h, --help          Show this help.
 
@@ -364,7 +364,7 @@ run_auto()
     fi
 }
 
-OPTS=$(getopt -l shell,dhcp,device:,advert-route,flash:,ws-network:,ws-domain:,ws-mode:,ws-class:,help -- sDd:rF:n:C:m:c:h "$@") || exit 1
+OPTS=$(getopt -l shell,dhcp,device:,advert-route,flash::,ws-network:,ws-domain:,ws-mode:,ws-class:,help -- sDd:rF::n:C:m:c:h "$@") || exit 1
 eval set -- "$OPTS"
 while true; do
     case "$1" in
@@ -385,7 +385,7 @@ while true; do
             shift 2
             ;;
         -F|--flash)
-            WS_FIRMWARE=$2
+            WS_FIRMWARE=${2:-/default_fw.bin}
             MANDATORY_OPENOCD=1
             shift 2
             ;;
