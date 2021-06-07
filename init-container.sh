@@ -35,6 +35,7 @@ Container options:
                       router of your network is not able to manage the new route
                       itself.
   -F, --flash=FW_PATH Flash radio board with FW_PATH.
+  -T, --chip-traces   Show traces from the chip.
   -s, --shell         Launch a shell on startup.
   -h, --help          Show this help.
 
@@ -222,6 +223,9 @@ launch_last_process()
         fi
         echo " ---> [1mLaunch sh[0m"
         exec sh
+    elif [ "$LAUNCH_TRACES" ]; then
+        echo " ---> [1mLaunch wisun-device-traces[0m"
+        exec wisun-device-traces
     else
         wait $TUNSLIP6_PID
         echo " ---> [1mWi-SUN border router has disappeared[0m"
@@ -361,12 +365,16 @@ run_auto()
     fi
 }
 
-OPTS=$(getopt -l shell,dhcp,device:,advert-route,flash:,ws-network:,ws-domain:,ws-mode:,ws-class:,help -- sDd:rF:n:C:m:c:h "$@") || exit 1
+OPTS=$(getopt -l shell,chip-traces,dhcp,device:,advert-route,flash:,ws-network:,ws-domain:,ws-mode:,ws-class:,help -- sTDd:rF:n:C:m:c:h "$@") || exit 1
 eval set -- "$OPTS"
 while true; do
     case "$1" in
         -s|--shell)
             LAUNCH_SHELL=1
+            shift 1
+            ;;
+        -T|--chip-traces)
+            LAUNCH_TRACES=1
             shift 1
             ;;
         -D|--dhcp)
@@ -416,6 +424,7 @@ while true; do
             ;;
     esac
 done
+[ "$LAUNCH_SHELL" -a "$LAUNCH_TRACE" ] && die "--shell and --chip-traces are exclusive"
 
 check_privilege
 
