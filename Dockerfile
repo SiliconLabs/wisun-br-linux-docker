@@ -27,7 +27,6 @@ RUN apk add --no-cache tshark
 RUN apk add --no-cache libusb busybox-extras
 COPY --from=builder /usr/local /usr/local
 COPY init-container.sh /init
-COPY wisunbrcli-bh-brd4170a.s37 /default_fw.bin
 
 ENTRYPOINT [ "/init" ]
 CMD [ "auto" ]
