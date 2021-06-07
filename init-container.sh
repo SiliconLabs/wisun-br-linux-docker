@@ -122,8 +122,17 @@ launch_icmp_monitoring()
 
 launch_dhcpc()
 {
+    # This could improved, but we use dhcpc to get address and dhclient to get
+    # prefix delegation
     umount /etc/resolv.conf
     udhcpc -i eth0
+}
+
+launch_dhclient()
+{
+    # This could improved, but we use dhcpc to get address and dhclient to get
+    # prefix delegation
+    dhclient -P eth0
 }
 
 launch_wsbrd()
@@ -333,6 +342,27 @@ run_subnet()
     launch_last_process
 }
 
+run_dhcpv6pd()
+{
+    sysctl -q net.ipv6.conf.default.disable_ipv6=0
+    sysctl -q net.ipv6.conf.all.disable_ipv6=0
+    sysctl -q net.ipv6.conf.default.forwarding=1
+    sysctl -q net.ipv6.conf.all.forwarding=1
+    sysctl -q net.ipv6.conf.default.accept_ra=2
+    sysctl -q net.ipv6.conf.all.accept_ra=2
+
+    launch_tunslip6
+    # dhclient will start radvd as soon as it will receive a DHCPv6-PD reply.
+    if [ "$ADVERT_ROUTE" ]; then
+        generate_radvd_conf bad:beef adv_route
+    else
+        generate_radvd_conf bad:beef
+    fi
+    launch_dhclient
+    launch_icmp_monitoring
+    launch_last_process
+}
+
 run_auto()
 {
     HAVE_IPV6=
@@ -449,7 +479,11 @@ case "$1" in
         run_proxy
         ;;
     subnet)
-        run_subnet $2
+        if [ "$2" = dhcp -o "$2" = DHCP ]; then
+            run_dhcpv6pd
+        else
+            run_subnet $2
+        fi
         ;;
     *)
         print_usage $0
