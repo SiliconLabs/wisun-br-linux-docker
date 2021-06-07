@@ -1,8 +1,8 @@
 #!/bin/sh
 # vim: set sw=4 expandtab:
 #
-# Licence: GPLv2
-# Created: 2020-11-18 09:27:46+01:00
+# Copyright 2021, Silicon Labs
+# SPDX-License-Identifier: zlib
 # Main authors:
 #     - Jérôme Pouiller <jerome.pouiller@silabs.com>
 #
