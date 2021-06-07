@@ -184,6 +184,12 @@ The subnet mode does not suffers of this limitation.
 
 [2]: https://github.com/DanielAdolfsson/ndppd/issues/69
 
+### I try to use `--ws-*` parameters but the container is not able to select the device
+
+If several board are connected to the USB port, the container is not able to
+know which it has to use. Unplug the board you don't want to configure to
+workaround this limitation.
+
 Further improvements
 --------------------
 
