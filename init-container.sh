@@ -41,10 +41,11 @@ Container options:
 Wi-SUN options:
   -n, --ws-network=NAME Set Wi-SUN network name.
   -C, --ws-domain=CC    Set Wi-SUN regulatory domain. Valid values: EU, NA, JP,
-                        ...).
+                        ...). (experimental)
   -m, --ws-mode=HEX     Set operating mode. Valid values: 1a, 1b, 2a, 2b, 3, 4a,
-                        4b and 5.
+                        4b and 5. (experimental)
   -c, --ws-class=NUM    Set operating class. Valid values: 1, 2 or 3.
+                        (experimental)
 
   These parameters are automatically saved in the radio board. If a parameter is
   not specified, the radio board value is used.
