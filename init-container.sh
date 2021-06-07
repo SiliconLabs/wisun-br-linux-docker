@@ -285,7 +285,7 @@ run_proxy()
     sysctl -q net.ipv6.conf.all.accept_ra=2
 
     for i in $(seq 10); do
-        ip -6 addr show eth0 | grep -q global && break
+        ip -6 addr show eth0 scope global && break
         sleep 0.2
     done
     IPV6_NET=$(rdisc6 -r 10 -w 400 -q -1 eth0)
@@ -353,7 +353,7 @@ run_auto()
 {
     HAVE_IPV6=
     for i in $(seq 20); do
-        ip -6 addr show eth0 | grep -q global && HAVE_IPV6=1 && break
+        ip -6 addr show eth0 scope global && HAVE_IPV6=1 && break
         sleep 0.2
     done
     if [ "$HAVE_IPV6" ]; then
