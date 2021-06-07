@@ -141,12 +141,11 @@ launch_wsbrd()
     done
 }
 
-launch_radvd()
+generate_radvd_conf()
 {
     IPV6_NET=$1
     EXT_BEHAVIOR=$2
 
-    echo " ---> [1mLaunch radvd on $IPV6_NET[0m"
     cat << EOF > /etc/radvd.conf
 interface tun0 {
     AdvSendAdvert on;
@@ -181,6 +180,15 @@ EOF
             die "internal error: unknown options: $EXT_BEHAVIOR"
             ;;
     esac
+}
+
+launch_radvd()
+{
+    IPV6_NET=$1
+    EXT_BEHAVIOR=$2
+
+    echo " ---> [1mLaunch radvd on $IPV6_NET[0m"
+    generate_radvd_conf $IPV6_NET $EXT_BEHAVIOR
     radvd --logmethod stderr
 }
 
