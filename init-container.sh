@@ -47,8 +47,9 @@ Modes:
                   communicate with Wi-SUN nodes.
   proxy           Re-use the local IPv6 prefix to configure Wi-SUN nodes.
   subnet [PREFIX] Use PREFIX to configure Wi-SUN nodes. PREFIX should come from
-                  configuration of the parent router. If PREFIX is not defined,
-                  generate a random site-local one.
+                  configuration of the parent router. If PREFIX is 'dhcp', get
+                  prefix using DHCPv6-PD (experimental). If PREFIX is not
+                  defined, generate a random site-local one.
   auto            Detect if a local IPv6 network is available and launch
                   \`site_local' or \`proxy' accordingly.
 
