@@ -27,6 +27,7 @@ RUN apk add --no-cache tshark
 RUN apk add --no-cache libusb busybox-extras
 COPY --from=builder /usr/local /usr/local
 COPY init-container.sh /init
+COPY wisun-device-traces /usr/bin/wisun-device-traces
 
 ENTRYPOINT [ "/init" ]
 CMD [ "auto" ]
