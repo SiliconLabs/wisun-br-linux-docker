@@ -68,16 +68,25 @@ You may want to open a shell into the container:
 
     docker exec -it wisun-vm sh
 
-Flash radio board
------------------
+Using the JTAG link
+-------------------
 
-The docker image is able to flash the radio board through the JLink probe
-included on WSTK board. First, you need to retrieve the Border Router image for
+The docker image is able to use the JTAG link available with SiliconLabs chips
+to configure Wi-SUN parameters, flash the radio board or get chip traces.
+
+See output of `--help` to get some information about Wi-SUN parameters.
+
+To flash the board, you need first to retrieve the Border Router image for
 your radio board. Then, you have to map the firmware file in the container using
 the docker `-v` option. Then, launch the container with `--flash` and the path
 of the firmware in the container:
 
     docker run -ti --privileged -v wisunbrcli-bh-brd4163a.bin:/tmp/fw.bin wisun-img --flash /tmp/fw.bin
+
+Finally you can get the traces using `-T`. You can also start the traces
+afterward with command wisun-device-traces:
+
+    docker container exec -ti CONTAINER_ID wisun-device-traces
 
 Bugs and limitations
 --------------------
