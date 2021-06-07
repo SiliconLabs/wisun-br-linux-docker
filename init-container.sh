@@ -256,23 +256,19 @@ EOF
     openocd -d0 -f board/efm32.cfg -f /tmp/openocd-rtt.cfg &
     OPENOCD_PID=$!
     sleep 1
-    if [ ! -d /proc/$OPENOCD_PID ]; then
-        if [ -z "$IS_MANDATORY" ]; then
-            echo "Failed to connect to JLink probe"
-            return
-        fi
-        die "Cannot connect to JLink probe"
+    [ -d /proc/$OPENOCD_PID ] || die "Cannot connect to JLink probe"
+    if [ "$WS_FIRMWARE" ]; then
+        [ -e "$WS_FIRMWARE" ] || die "'$WS_FIRMWARE' not found (missing -v in docker command?)"
+        jlink_run "program $WS_FIRMWARE 0 reset"
     fi
-    [ -z "$WS_FIRMWARE" -o -e "$WS_FIRMWARE" ] || die "'$WS_FIRMWARE' not found (missing -v in docker command?)"
-    [ "$WS_FIRMWARE" ]  && jlink_run "program $WS_FIRMWARE 0 reset"
     [ "$WS_DOMAIN" ]    && jlink_rtt_run "wisun set wisun.regulatory_domain $WS_DOMAIN"
     [ "$WS_CLASS" ]     && jlink_rtt_run "wisun set wisun.operating_class $WS_CLASS"
     [ "$WS_MODE" ]      && jlink_rtt_run "wisun set wisun.operating_mode $WS_MODE"
     [ "$WS_NETWORK" ]   && jlink_rtt_run "wisun set wisun.network_name $WS_NETWORK"
-    [ "$IS_MANDATORY" ] && jlink_rtt_run "wisun save"
+    jlink_rtt_run "wisun save"
     sleep 0.5
-    [ "$IS_MANDATORY" ] && jlink_run "reset run"
-    echo "You can get the log with \"telnet 127.0.0.1 1001\""
+    jlink_run "reset run"
+    kill $OPENOCD_PID
 }
 
 run_proxy()
@@ -387,27 +383,27 @@ while true; do
             ;;
         -F|--flash)
             WS_FIRMWARE=$2
-            MANDATORY_OPENOCD=1
+            LAUNCH_OPENOCD=1
             shift 2
             ;;
         -n|--ws-network)
             WS_NETWORK=$2
-            MANDATORY_OPENOCD=1
+            LAUNCH_OPENOCD=1
             shift 2
             ;;
         -C|--ws-domain)
             WS_DOMAIN=$2
-            MANDATORY_OPENOCD=1
+            LAUNCH_OPENOCD=1
             shift 2
             ;;
         -m|--ws-mode)
             WS_MODE=$2
-            MANDATORY_OPENOCD=1
+            LAUNCH_OPENOCD=1
             shift 2
             ;;
         -c|--ws-class)
             WS_CLASS=$2
-            MANDATORY_OPENOCD=1
+            LAUNCH_OPENOCD=1
             shift 2
             ;;
         -h|--help)
@@ -426,7 +422,7 @@ check_privilege
 sysctl -q net.ipv6.conf.eth0.accept_ra=2
 sysctl -q net.ipv6.conf.eth0.disable_ipv6=0
 [ "$LAUNCH_DHCPC" ] && launch_dhcpc
-launch_openocd $MANDATORY_OPENOCD
+[ "$LAUNCH_OPENOCD" ] && launch_openocd
 
 case "$1" in
     auto|"")
