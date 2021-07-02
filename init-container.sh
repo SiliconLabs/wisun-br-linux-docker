@@ -145,6 +145,21 @@ launch_tunslip6()
     fi
 }
 
+launch_wsbrd()
+{
+    [ -e "$UART" ] || die "Failed to detect $UART"
+
+    echo " ---> [1mLaunch wsbrd on $UART[0m"
+    wsbrd -u $UART &
+    WSBRD_PID=$!
+
+    # We expect that accept_ra=2 and radvd is running on tun0
+    for i in $(seq 10); do
+        ip -6 addr show tun0 scope global > /dev/null && break
+        sleep 0.2
+    done
+}
+
 launch_radvd()
 {
     IPV6_NET=$1
