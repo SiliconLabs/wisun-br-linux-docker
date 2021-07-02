@@ -126,7 +126,7 @@ launch_wsbrd()
     [ -e "$UART" ] || die "Failed to detect $UART"
 
     echo " ---> [1mLaunch wsbrd on $UART[0m"
-    wsbrd -u $UART &
+    wsbrd -u $UART$WSBRD_ARGS &
     WSBRD_PID=$!
 
     # We expect that accept_ra=2 and radvd is running on tun0
@@ -365,19 +365,19 @@ while true; do
             shift 2
             ;;
         -n|--ws-network)
-            WS_NETWORK=$2
+            WSBRD_ARGS="$WSBRD_ARGS -n $2"
             shift 2
             ;;
         -C|--ws-domain)
-            WS_DOMAIN=$2
+            WSBRD_ARGS="$WSBRD_ARGS -d $2"
             shift 2
             ;;
         -m|--ws-mode)
-            WS_MODE=$2
+            WSBRD_ARGS="$WSBRD_ARGS -m $2"
             shift 2
             ;;
         -c|--ws-class)
-            WS_CLASS=$2
+            WSBRD_ARGS="$WSBRD_ARGS -c $2"
             shift 2
             ;;
         -h|--help)
