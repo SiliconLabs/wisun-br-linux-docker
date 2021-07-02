@@ -25,7 +25,7 @@ Usage: $1 [OPTIONS] [MODE]
 Setup the docker container to create a Wi-SUN Border Router.
 
 Container options:
-  -d, --device=DEVICE UART device to use (default: /dev/ttyACM0).
+  -u, --uart=DEVICE   UART device to use (default: /dev/ttyACM0).
   -D, --dhcp          Configure IPv4 using DHCP. Use it if you rely on a
                       network interface with macvlan driver.
   -r, --advert-route  Advertise the new route on eth0. Only works with the subnet
@@ -41,7 +41,7 @@ Container options:
 
 Wi-SUN options:
   -n, --ws-network=NAME Set Wi-SUN network name.
-  -C, --ws-domain=CC    Set Wi-SUN regulatory domain. Valid values: EU, NA, JP,
+  -d, --ws-domain=CC    Set Wi-SUN regulatory domain. Valid values: EU, NA, JP,
                         ...). (experimental)
   -m, --ws-mode=HEX     Set operating mode. Valid values: 1a, 1b, 2a, 2b, 3, 4a,
                         4b and 5. (experimental)
@@ -336,7 +336,7 @@ run_auto()
     fi
 }
 
-OPTS=$(getopt -l shell,chip-traces,dhcp,device:,advert-route,flash:,ws-network:,ws-domain:,ws-mode:,ws-class:,help -- sTDd:rF:n:C:m:c:h "$@") || exit 1
+OPTS=$(getopt -l shell,chip-traces,dhcp,device:,uart:,advert-route,flash:,ws-network:,ws-domain:,ws-mode:,ws-class:,help -- sTDu:rF:n:d:m:c:h "$@") || exit 1
 eval set -- "$OPTS"
 while true; do
     case "$1" in
@@ -352,7 +352,7 @@ while true; do
             LAUNCH_DHCPC=1
             shift 1
             ;;
-        -d|--device)
+        -u|--uart|--device)
             UART=$2
             shift 2
             ;;
@@ -368,7 +368,7 @@ while true; do
             WSBRD_ARGS="$WSBRD_ARGS -n $2"
             shift 2
             ;;
-        -C|--ws-domain)
+        -d|--ws-domain)
             WSBRD_ARGS="$WSBRD_ARGS -d $2"
             shift 2
             ;;
