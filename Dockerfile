@@ -7,6 +7,10 @@ COPY tunslip6-install.sh .
 COPY tunslip6            ./tunslip6
 RUN  ./tunslip6-install.sh
 
+WORKDIR /usr/src/
+COPY wsbrd-install.sh                         .
+RUN --mount=type=ssh ./wsbrd-install.sh
+
 WORKDIR /usr/src
 COPY ndppd-install.sh                          .
 COPY ndppd-0001-Fixes-strerror_r-GNU-XSI.patch .
