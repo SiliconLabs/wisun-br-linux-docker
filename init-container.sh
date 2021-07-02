@@ -415,7 +415,7 @@ while true; do
             ;;
     esac
 done
-[ "$LAUNCH_SHELL" -a "$LAUNCH_TRACE" ] && die "--shell and --chip-traces are exclusive"
+[ "$LAUNCH_SHELL" -a "$LAUNCH_TRACES" ] && die "--shell and --chip-traces are exclusive"
 
 check_privilege
 
