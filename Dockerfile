@@ -2,11 +2,6 @@ FROM alpine:3.12 AS builder
 LABEL maintainer="Jérôme Pouiller <jerome.pouiller@silabs.com>"
 RUN apk add build-base
 
-WORKDIR /usr/src
-COPY tunslip6-install.sh .
-COPY tunslip6            ./tunslip6
-RUN  ./tunslip6-install.sh
-
 WORKDIR /usr/src/
 COPY wsbrd-install.sh                         .
 RUN --mount=type=ssh ./wsbrd-install.sh
