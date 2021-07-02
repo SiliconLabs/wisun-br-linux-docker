@@ -1,6 +1,6 @@
 FROM alpine:3.12 AS builder
 LABEL maintainer="Jérôme Pouiller <jerome.pouiller@silabs.com>"
-RUN apk add build-base
+RUN apk add build-base git
 
 WORKDIR /usr/src/
 COPY wsbrd-install.sh                         .
