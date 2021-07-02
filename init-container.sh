@@ -8,7 +8,7 @@
 #
 set +m
 
-TUNSLIP6_PID=-1
+WSBRD_PID=-1
 UART=/dev/ttyACM0
 
 die()
@@ -121,30 +121,6 @@ launch_dhcpc()
     udhcpc -i eth0
 }
 
-launch_tunslip6()
-{
-    HAS_ARG=$1
-    IPV6_IP=${1:-fd01::1/64}
-    [ -e "$UART" ] || die "Failed to detect $UART"
-
-    echo " ---> [1mLaunch tunslip6 on $UART[0m"
-    tunslip6 -s $UART -B 115200 $IPV6_IP &
-    TUNSLIP6_PID=$!
-    for i in $(seq 10); do
-        ip -6 addr show tun0 | grep -q $IPV6_IP && break
-        sleep 0.2
-    done
-    if [ ! "$HAS_ARG" ]; then
-        # tunslip6 add these addresses but it is useless.
-        ip addr del dev tun0 fe80::1/64
-        ip addr del dev tun0 fd01::1/64
-    else
-        # tunslip6 add this address but it is useless
-        #ip addr del dev tun0 fe80::1/64
-        true
-    fi
-}
-
 launch_wsbrd()
 {
     [ -e "$UART" ] || die "Failed to detect $UART"
@@ -242,7 +218,7 @@ launch_last_process()
         echo " ---> [1mLaunch wisun-device-traces[0m"
         exec wisun-device-traces
     else
-        wait $TUNSLIP6_PID
+        wait $WSBRD_PID
         echo " ---> [1mWi-SUN border router has disappeared[0m"
     fi
 }
@@ -306,8 +282,8 @@ run_proxy()
     IPV6_NET=$(rdisc6 -r 10 -w 400 -q -1 eth0)
     [ "$IPV6_NET" ] || die "Failed to get IPv6 address"
 
-    launch_tunslip6 $IPV6_NET
     launch_radvd $IPV6_NET
+    launch_wsbrd
     launch_ndppd $IPV6_NET
     launch_icmp_monitoring
     launch_last_process
@@ -323,8 +299,8 @@ run_site_local()
     sysctl -q net.ipv6.conf.all.accept_ra=2
 
     SITE_PREFIX=$(get_random_prefix)
-    launch_tunslip6 fd$SITE_PREFIX::1/64
     launch_radvd fd$SITE_PREFIX::/64 adv_prefix
+    launch_wsbrd
     launch_ndppd fd$SITE_PREFIX::/64
     launch_icmp_monitoring
     launch_last_process
@@ -338,8 +314,8 @@ run_local()
     sysctl -q net.ipv6.conf.all.accept_ra=2
 
     SITE_PREFIX=$(get_random_prefix)
-    launch_tunslip6 fd$SITE_PREFIX::1/64
     launch_radvd fd$SITE_PREFIX::/64
+    launch_wsbrd
     launch_icmp_monitoring
     launch_last_process
 }
@@ -354,12 +330,12 @@ run_subnet()
     sysctl -q net.ipv6.conf.all.accept_ra=2
 
     IPV6_NET=${1:-fd$(get_random_prefix)::/64}
-    launch_tunslip6
     if [ "$ADVERT_ROUTE" ]; then
         launch_radvd $IPV6_NET adv_route
     else
         launch_radvd $IPV6_NET
     fi
+    launch_wsbrd
     launch_icmp_monitoring
     launch_last_process
 }
