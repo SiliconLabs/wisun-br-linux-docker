@@ -35,9 +35,14 @@ and back in for this to take effect!):
 
 Go to this repository and build the image with:
 
-    docker build -t wisun-img .
+    DOCKER_BUILDKIT=1 docker build --ssh default -t wisun-img .
 
-You may save a bit of bytes by removing the build environment and only
+Note that `DOCKER_BUILDKIT` and `--ssh` are necessary to authenticate to the
+Silabs private git repository. These options rely on `ssh-agent` launched on
+your host to authenticate to the git server. Therefore, if you encounter any
+problem with git access, check your ssh setup is correct.
+
+then, you may save a bit of bytes by removing the build environment and only
 keeping the final image:
 
     docker image prune
