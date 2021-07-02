@@ -223,19 +223,7 @@ launch_last_process()
     fi
 }
 
-jlink_rtt_run()
-{
-    echo "run \"$*\" on radio board"
-    echo "$*" | nc 127.0.0.1 1001
-}
-
-jlink_run()
-{
-    echo "run \"$*\" on JLink probe"
-    echo "$*" | nc 127.0.0.1 1002 > /dev/null
-}
-
-launch_openocd()
+flash_firmware()
 {
     IS_MANDATORY=$1
     cat << 'EOF' > /tmp/openocd-rtt.cfg
@@ -252,17 +240,9 @@ EOF
     OPENOCD_PID=$!
     sleep 1
     [ -d /proc/$OPENOCD_PID ] || die "Cannot connect to JLink probe"
-    if [ "$WS_FIRMWARE" ]; then
-        [ -e "$WS_FIRMWARE" ] || die "'$WS_FIRMWARE' not found (missing -v in docker command?)"
-        jlink_run "program $WS_FIRMWARE 0 reset"
-    fi
-    [ "$WS_DOMAIN" ]    && jlink_rtt_run "wisun set wisun.regulatory_domain $WS_DOMAIN"
-    [ "$WS_CLASS" ]     && jlink_rtt_run "wisun set wisun.operating_class $WS_CLASS"
-    [ "$WS_MODE" ]      && jlink_rtt_run "wisun set wisun.operating_mode $WS_MODE"
-    [ "$WS_NETWORK" ]   && jlink_rtt_run "wisun set wisun.network_name $WS_NETWORK"
-    jlink_rtt_run "wisun save"
-    sleep 0.5
-    jlink_run "reset run"
+    [ -e "$FIRMWARE" ] || die "'$FIRMWARE' not found (missing -v in docker command?)"
+    echo "run \"program $FIRMWARE 0 reset\" on JLink probe"
+    echo "program $FIRMWARE 0 reset" | nc 127.0.0.1 1002 > /dev/null
     kill $OPENOCD_PID
 }
 
@@ -381,28 +361,23 @@ while true; do
             shift 2
             ;;
         -F|--flash)
-            WS_FIRMWARE=$2
-            LAUNCH_OPENOCD=1
+            FIRMWARE=$2
             shift 2
             ;;
         -n|--ws-network)
             WS_NETWORK=$2
-            LAUNCH_OPENOCD=1
             shift 2
             ;;
         -C|--ws-domain)
             WS_DOMAIN=$2
-            LAUNCH_OPENOCD=1
             shift 2
             ;;
         -m|--ws-mode)
             WS_MODE=$2
-            LAUNCH_OPENOCD=1
             shift 2
             ;;
         -c|--ws-class)
             WS_CLASS=$2
-            LAUNCH_OPENOCD=1
             shift 2
             ;;
         -h|--help)
@@ -422,7 +397,7 @@ check_privilege
 sysctl -q net.ipv6.conf.eth0.accept_ra=2
 sysctl -q net.ipv6.conf.eth0.disable_ipv6=0
 [ "$LAUNCH_DHCPC" ] && launch_dhcpc
-[ "$LAUNCH_OPENOCD" ] && launch_openocd
+[ "$FIRMWARE" ] && flash_firmware
 
 case "$1" in
     auto|"")
