@@ -50,6 +50,12 @@ If you have an IPv6 network, create a macvlan interface to leverage it (replace
 Launch image
 ------------
 
+Before you continue, you have to be aware that if no IPv6 network is detected
+(and no command line option prevents it), this image will advertise a network
+configuration. It may impact the other hosts on your network. To avoid any
+inconvenience, we suggest to work with an isolated network. See also [Can this
+image breaks my local network?](#can-this-image-breaks-my-local-network)
+
 Check that the Wi-SUN BR device is available on `/dev/ttyACM0` (or pass the
 correct device name to the guest with `-d`).
 
@@ -192,6 +198,30 @@ a solicitation comes from outside (B).
 The subnet mode does not suffers of this limitation.
 
 [2]: https://github.com/DanielAdolfsson/ndppd/issues/69
+
+### Can this image breaks my local network?
+
+When this image start in `site_local` mode, it will advertise network
+configuration. The other hosts on the local network will also receive this
+configuration and will use it. From here, there are two situations:
+
+  1. The hosts already have a valid IPv6 configuration. The new configuration
+     will probably break the current one.
+
+  2. The other hosts only use IPv4. IPv4 traffic won't be impacted. However,
+     some DNS records may contain IPv4 and IPv6 fields. In this case, the
+     applications may try to use the new shiny IPv6 configuration. The hosts
+     will forward IPv6 traffic to the docker image. The image will reply with an
+     error. Then, if we are lucky (AFAIK the most common case), the application
+     will fallback to IPv4 and it will work. Else, if we are not lucky, the
+     application will just stop here with a failure.
+
+
+If you don't enforce `site_local`, the image will try to detect existent IPv6
+network. `site_local` will be started only no IPv6 network has been detected. So
+the first scenario is unlikely to happen.
+
+Anyway, if you use `site_local` mode, we recommend to use a dedicated network.
 
 ### I try to use `--ws-*` parameters but the container is not able to select the device
 
