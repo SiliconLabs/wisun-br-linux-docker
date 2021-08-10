@@ -60,8 +60,15 @@ Wi-SUN parameters:
   -d, --ws-domain=CC
   -m, --ws-mode=HEX
   -c, --ws-class=NUM
+  -K, --ws-key=FILE
+  -C, --ws-cert=FILE
+  -A, --ws-authority=FILE
 
 Refer to the output \`wsbrd --help' for usage of these options.
+
+By default, this container uses embedded test certficates. If you provide your
+owns, don't forget to map the files into the container (passing option -v to
+\`docker run').
 
 Examples:
 
