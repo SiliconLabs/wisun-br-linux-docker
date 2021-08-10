@@ -20,7 +20,7 @@ die()
 print_usage()
 {
     cat << EOF >&2
-Usage: $1 [OPTIONS] [MODE]
+Usage: $1 [OPTIONS] [WISUN_PARAMS] [MODE]
 
 Setup the docker container to create a Wi-SUN Border Router.
 
@@ -39,16 +39,6 @@ Container options:
   -s, --shell         Launch a shell on startup.
   -h, --help          Show this help.
 
-In add, this container support options to configure the Wi-SUN network. These
-options are the same Wi-SUN Border Router daemon (wsbrd) but with a \`ws-'
-prefix:
-  -n, --ws-network=NAME
-  -d, --ws-domain=CC
-  -m, --ws-mode=HEX
-  -c, --ws-class=NUM
-
-Refer to the output \`wsbrd --help' for more usage of these options.
-
 Modes:
   local           The nodes will be only able to communicate with the docker
                   instance using a random site-local prefix.
@@ -64,6 +54,14 @@ Modes:
 
 Note that random site-local prefixes are not routable (ie. you can't access
 outside with these).
+
+Wi-SUN parameters:
+  -n, --ws-network=NAME
+  -d, --ws-domain=CC
+  -m, --ws-mode=HEX
+  -c, --ws-class=NUM
+
+Refer to the output \`wsbrd --help' for usage of these options.
 
 Examples:
 
