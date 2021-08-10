@@ -39,17 +39,15 @@ Container options:
   -s, --shell         Launch a shell on startup.
   -h, --help          Show this help.
 
-Wi-SUN options:
-  -n, --ws-network=NAME Set Wi-SUN network name.
-  -d, --ws-domain=CC    Set Wi-SUN regulatory domain. Valid values: EU, NA, JP,
-                        ...). (experimental)
-  -m, --ws-mode=HEX     Set operating mode. Valid values: 1a, 1b, 2a, 2b, 3, 4a,
-                        4b and 5. (experimental)
-  -c, --ws-class=NUM    Set operating class. Valid values: 1, 2 or 3.
-                        (experimental)
+In add, this container support options to configure the Wi-SUN network. These
+options are the same Wi-SUN Border Router daemon (wsbrd) but with a \`ws-'
+prefix:
+  -n, --ws-network=NAME
+  -d, --ws-domain=CC
+  -m, --ws-mode=HEX
+  -c, --ws-class=NUM
 
-  These parameters are automatically saved in the radio board. If a parameter is
-  not specified, the radio board value is used.
+Refer to the output \`wsbrd --help' for more usage of these options.
 
 Modes:
   local           The nodes will be only able to communicate with the docker
