@@ -122,7 +122,7 @@ launch_wsbrd()
     [ -e "$UART" ] || die "Failed to detect $UART"
 
     echo " ---> [1mLaunch wsbrd on $UART[0m"
-    wsbrd -u $UART$WSBRD_ARGS &
+    wsbrd -u $UART$WSBRD_ARGS --key=$WS_KEY --cert=$WS_CERT --authority=$WS_AUTHORITY &
     WSBRD_PID=$!
 
     # We expect that accept_ra=2 and radvd is running on tun0
@@ -332,7 +332,10 @@ run_auto()
     fi
 }
 
-OPTS=$(getopt -l shell,chip-traces,dhcp,device:,uart:,advert-route,flash:,ws-network:,ws-domain:,ws-mode:,ws-class:,help -- sTDu:rF:n:d:m:c:h "$@") || exit 1
+WS_KEY=/usr/local/share/wsbrd/examples/br_key.pem
+WS_CERT=/usr/local/share/wsbrd/examples/br_cert.pem
+WS_AUTHORITY=/usr/local/share/wsbrd/examples/ca_cert.pem
+OPTS=$(getopt -l shell,chip-traces,dhcp,device:,uart:,advert-route,flash:,ws-network:,ws-domain:,ws-mode:,ws-class:,ws-key:,ws-cert:,ws-authority:,help -- sTDu:rF:n:d:m:c:K:C:A:h "$@") || exit 1
 eval set -- "$OPTS"
 while true; do
     case "$1" in
@@ -374,6 +377,18 @@ while true; do
             ;;
         -c|--ws-class)
             WSBRD_ARGS="$WSBRD_ARGS -c $2"
+            shift 2
+            ;;
+        -K|--ws-key)
+            WS_KEY="$2"
+            shift 2
+            ;;
+        -C|--ws-cert)
+            WS_CERT="$2"
+            shift 2
+            ;;
+        -A|--ws-authority)
+            WS_AUTHORITY="$2"
             shift 2
             ;;
         -h|--help)
