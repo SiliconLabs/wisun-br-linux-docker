@@ -1,17 +1,16 @@
 Wi-SUN Border router
 ====================
 
-A Wi-SUN Border Router (BR) allows to connect a Wi-SUN network to internet. The
-WinSun BR firmware for EFR32 is able to make most of this job. However, EFR32
-only provides a Slip (Serial Line Internet Protocol) connectivity. This
-repository links the Slip connection to the rest of the network.
+A Wi-SUN Border Router (BR) allows to connect a Wi-SUN network to internet. A
+Border Router need to provide some IPv6 services and talk with a RF device.
 
 To simplify the deployment, all the work is done inside a Docker container. It
 aims to run on a Raspberry Pi, but it should work on any Linux host and even on
 Windows.
 
-The Wi-SUN BR has to be connected to the host using USB. The docker will see it
-as a serial (UART) connection.
+This implementation rely on Wi-SUN RCP firmware v0.0.1. The EFR with the correct
+firmware has to be connected to the host using USB. The docker will see it as a
+serial (UART) connection.
 
 Use of a network with IPv6 connectivity is encouraged. If IPv6 is not
 available, the docker image will automatically switch to "local" mode. In local
@@ -87,10 +86,11 @@ to configure Wi-SUN parameters, flash the radio board or get chip traces.
 
 See output of `--help` to get some information about Wi-SUN parameters.
 
-To flash the board, you need first to retrieve the Border Router image for
-your radio board. Then, you have to map the firmware file in the container using
-the docker `-v` option. Then, launch the container with `--flash` and the path
-of the firmware in the container:
+To flash the board, you need first to retrieve the Wi-SUN RCP v0.0.1 image for
+your radio board. This image is not yet public. Contact SiliconLabs Wi-SUN team
+to get it. Then, you have to map the firmware file in the container using the
+docker `-v` option. Then, launch the container with `--flash` and the path of
+the firmware in the container:
 
     docker run -ti --privileged -v wisunbrcli-bh-brd4163a.bin:/tmp/fw.bin wisun-img --flash /tmp/fw.bin
 
