@@ -135,7 +135,7 @@ launch_wsbrd()
 
     # We expect that accept_ra=2 and radvd is running on tun0
     for i in $(seq 10); do
-        ip -6 addr show tun0 scope global > /dev/null && break
+        ip -6 addr show scope global | grep -q tun0 && break
         sleep 0.2
     done
 }
@@ -260,7 +260,7 @@ run_proxy()
     sysctl -q net.ipv6.conf.all.accept_ra=2
 
     for i in $(seq 10); do
-        ip -6 addr show eth0 scope global && break
+        ip -6 addr show scope global | grep -q eth0 && break
         sleep 0.2
     done
     IPV6_NET=$(rdisc6 -r 10 -w 400 -q -1 eth0)
@@ -328,7 +328,7 @@ run_auto()
 {
     HAVE_IPV6=
     for i in $(seq 20); do
-        ip -6 addr show eth0 scope global && HAVE_IPV6=1 && break
+        ip -6 addr show scope global | grep -q eth0 && HAVE_IPV6=1 && break
         sleep 0.2
     done
     if [ "$HAVE_IPV6" ]; then
