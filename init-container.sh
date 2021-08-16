@@ -340,6 +340,8 @@ run_auto()
     fi
 }
 
+cat /etc/issue
+
 WS_KEY=/usr/local/share/wsbrd/examples/br_key.pem
 WS_CERT=/usr/local/share/wsbrd/examples/br_cert.pem
 WS_AUTHORITY=/usr/local/share/wsbrd/examples/ca_cert.pem

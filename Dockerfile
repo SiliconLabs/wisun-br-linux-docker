@@ -1,6 +1,9 @@
 FROM alpine:3.12 AS builder
+ARG GIT_DESCRIBE
 LABEL maintainer="Jérôme Pouiller <jerome.pouiller@silabs.com>"
+LABEL version="${GIT_DESCRIBE:-<unknown>}"
 RUN apk add build-base git
+RUN echo -n > /etc/issue
 
 WORKDIR /usr/src/
 COPY wsbrd-install.sh                         .
@@ -24,9 +27,13 @@ RUN apk add --no-cache libstdc++
 RUN apk add --no-cache tshark
 # busybox-extras contains "telnet"
 RUN apk add --no-cache libusb busybox-extras
+COPY --from=builder /etc/issue /etc/issue
 COPY --from=builder /usr/local /usr/local
 COPY init-container.sh /init
 COPY wisun-device-traces /usr/bin/wisun-device-traces
+# Trick: $GIT_DESCRIBE often changes, so place this line at the end to take
+# advantage of the docker cache system.
+RUN sed -i "1iDocker image ${GIT_DESCRIBE:-<unknown>}" /etc/issue
 
 ENTRYPOINT [ "/init" ]
 CMD [ "auto" ]

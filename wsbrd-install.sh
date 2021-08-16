@@ -20,3 +20,5 @@ git clone --depth=1 --quiet --branch=v0.0.3 ssh://git@stash.silabs.com/wi-sun/wi
 cmake -S ./wsbrd -B ./wsbrd-build -G Ninja
 ninja -C ./wsbrd-build
 ninja -C ./wsbrd-build install
+echo -n "Built with wsbrd " >> /etc/issue
+git -C ./wsbrd describe --tags --dirty --match v\* >> /etc/issue

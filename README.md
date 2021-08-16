@@ -34,7 +34,7 @@ and back in for this to take effect!):
 
 Go to this repository and build the image with:
 
-    DOCKER_BUILDKIT=1 docker build --ssh default -t wisun-img .
+    DOCKER_BUILDKIT=1 docker build --build-arg "GIT_DESCRIBE=$(git describe --tag --match v*)" --ssh default -t wisun-img .
 
 Note that `DOCKER_BUILDKIT` and `--ssh` are necessary to authenticate to the
 Silabs private git repository. These options rely on `ssh-agent` launched on
