@@ -8,7 +8,7 @@ To simplify the deployment, all the work is done inside a Docker container. It
 aims to run on a Raspberry Pi, but it should work on any Linux host and even on
 Windows.
 
-This implementation rely on Wi-SUN RCP firmware v0.0.2. The EFR with the correct
+This implementation rely on Wi-SUN RCP firmware v0.0.3. The EFR with the correct
 firmware has to be connected to the host using USB. The docker will see it as a
 serial (UART) connection.
 
@@ -86,7 +86,7 @@ to configure Wi-SUN parameters, flash the radio board or get chip traces.
 
 See output of `--help` to get some information about Wi-SUN parameters.
 
-To flash the board, you need first to retrieve the Wi-SUN RCP v0.0.2 image for
+To flash the board, you need first to retrieve the Wi-SUN RCP v0.0.3 image for
 your radio board. This image is not yet public. Contact SiliconLabs Wi-SUN team
 to get it. Then, you have to map the firmware file in the container using the
 docker `-v` option. Then, launch the container with `--flash` and the path of
