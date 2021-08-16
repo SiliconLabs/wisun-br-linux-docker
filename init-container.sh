@@ -60,6 +60,7 @@ Wi-SUN parameters:
   -d, --ws-domain=CC
   -m, --ws-mode=HEX
   -c, --ws-class=NUM
+  -S, --ws-size=SIZE
   -K, --ws-key=FILE
   -C, --ws-cert=FILE
   -A, --ws-authority=FILE
@@ -342,7 +343,7 @@ run_auto()
 WS_KEY=/usr/local/share/wsbrd/examples/br_key.pem
 WS_CERT=/usr/local/share/wsbrd/examples/br_cert.pem
 WS_AUTHORITY=/usr/local/share/wsbrd/examples/ca_cert.pem
-OPTS=$(getopt -l shell,chip-traces,dhcp,device:,uart:,advert-route,flash:,ws-network:,ws-domain:,ws-mode:,ws-class:,ws-key:,ws-cert:,ws-authority:,help -- sTDu:rF:n:d:m:c:K:C:A:h "$@") || exit 1
+OPTS=$(getopt -l shell,chip-traces,dhcp,device:,uart:,advert-route,flash:,ws-network:,ws-domain:,ws-mode:,ws-class:,ws-size:,ws-key:,ws-cert:,ws-authority:,help -- sTDu:rF:n:d:m:c:S:K:C:A:h "$@") || exit 1
 eval set -- "$OPTS"
 while true; do
     case "$1" in
@@ -384,6 +385,10 @@ while true; do
             ;;
         -c|--ws-class)
             WSBRD_ARGS="$WSBRD_ARGS -c $2"
+            shift 2
+            ;;
+        -S|--ws-size)
+            WSBRD_ARGS="$WSBRD_ARGS -S $2"
             shift 2
             ;;
         -K|--ws-key)
