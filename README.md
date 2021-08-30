@@ -1,27 +1,28 @@
 Wi-SUN Border router
 ====================
 
-A Wi-SUN Border Router (BR) allows to connect a Wi-SUN network to internet. A
-Border Router need to provide some IPv6 services and talk with a RF device.
+In a Wi-SUN network, the Border Router (BR) is in charge of the management of
+the network (authentication, etc...) and to provide internet connectivity to the
+network.
 
 To simplify the deployment, all the work is done inside a Docker container. It
-aims to run on a Raspberry Pi, but it should work on any Linux host and even on
-Windows.
+aims to run on a Raspberry Pi, but it should work on any Linux host.
 
-This implementation rely on Wi-SUN RCP firmware v0.0.4. The EFR with the correct
-firmware has to be connected to the host using USB. The docker will see it as a
-serial (UART) connection.
+This implementation relies on an external EFR (Silicon Labs radio device)
+flashed with Silicon Labs Wi-SUN RCP firmware. The EFR has to be connected to
+the host using USB.  The docker will see it as a serial (UART) connection. In
+order to simplify deployment, this image is able to flash the correct firmware
+(see [Using the JTAG link](#using-the-jtag-link)).
 
-Use of a network with IPv6 connectivity is encouraged. If IPv6 is not
-available, the docker image will automatically switch to "local" mode. In local
-mode, the container and the Wi-SUN nodes are able to reach themselves, but
-communication with the outside is not possible. See also [Bugs and
-limitations](#bugs-and-limitations).
+Use of a network with IPv6 connectivity is encouraged. If IPv6 is not available,
+you will have to use "local" or "site-local" modes (these modes have some
+pitfalls, see below).
 
 Installation
 ------------
 
-A pre-build image is not (yet) available. You have to build an image yourself.
+A pre-build image of the container is not (yet) available. You have to build an
+image yourself.
 
 Install docker:
 
@@ -37,10 +38,11 @@ Go to this repository and build the image with:
     DOCKER_BUILDKIT=1 docker build --build-arg "GIT_DESCRIBE=$(git describe --tag --match v*)" --ssh default -t wisun-img .
 
 Note that `DOCKER_BUILDKIT` and `--ssh` are necessary to authenticate to the
-Silabs private git repository. If this step fail, check the section [I am unable
-to build the image](#i-am-unable-to-build-the-image)
+Github private git repository. If this step fail, check the section [I have an
+error while retrieving `wsbrd`
+sources](#i-have-an-error-while-retrieving-wsbrd-sources)
 
-Then, you may save a bit of bytes by removing the build environment and only
+Then, you may save a bunch of bytes by removing the build environment and only
 keeping the final image:
 
     docker image prune
@@ -48,7 +50,7 @@ keeping the final image:
 If you have an IPv6 network, create a macvlan interface to leverage it (replace
 `eth0` by the name of you physical network interface):
 
-    docker network create -d macvlan -o parent=eth0 wisun-net
+    sudo docker network create -d macvlan -o parent=eth0 wisun-net
 
 Launch image
 ------------
@@ -62,7 +64,7 @@ image breaks my local network?](#can-this-image-breaks-my-local-network)
 Check that the Wi-SUN BR device is available on `/dev/ttyACM0` (or pass the
 correct device name to the guest with `-d`).
 
-Launch a shell in your image using:
+Launch your image using:
 
     docker run -ti --privileged --rm --network=wisun-net --name=wisun-vm wisun-img
 
@@ -77,38 +79,44 @@ You may want to open a shell into the container:
 
     docker exec -ti wisun-vm sh
 
+Advanced users may want to drop the `--rm` option and work with `docker start`,
+`docker stop`, etc...
+
 Using the JTAG link
 -------------------
 
-The docker image is able to use the JTAG link available with SiliconLabs chips
-to configure Wi-SUN parameters, flash the radio board or get chip traces.
+The docker image is able to use the JTAG link available with Silicon Labs chips
+to configure the Wi-SUN parameters, flash the radio board or get chip traces.
 
-See output of `--help` to get some information about Wi-SUN parameters.
-
-Your Silabs radio board must be flashed with the Wi-SUN RCP firmware. This
-firmware is included in the docker image. You can start the container with
-"--flash -" to flash it (replace "-" by another path to flash your custom
-firmware).
+You can start the container with "--flash -" to flash the connected board with
+the built-in firmware. This firmware should work with most of Silicon Labs radio
+boards:
 
     docker run -ti --privileged --rm --network=wisun-net --name=wisun-vm wisun-img --flash -
 
-Finally you can get the traces using `-T`. You can also start the traces
-afterward with command wisun-device-traces:
+You also replace "-" by another path to flash your custom firmware.
+
+You can also use the JTAG link to retrieve traces from the radio board. You can
+either pass `-T` to `docker run` or start the traces afterward with command
+wisun-device-traces:
 
     docker exec -ti wisun-vm wisun-device-traces
 
 Bugs and limitations
 --------------------
 
-### I am unable to build the image
+### I have an error while retrieving `wsbrd` sources
 
-In 99% of the cases, there is a problem to get the sources of wsbrd. Check if
-your key appears in output of:
+`wsbrd` is hosted on a private repository. You have to have a running
+`ssh-agent` with your key inside to access the repository.
+
+To see if your environment is correct, check if your key appears in the output
+of:
 
     ssh-add -l
 
-The process to working with ssh keys is lengthy described in GitHub
-documentation[3].
+The process to work with ssh keys is lengthy described in [GitHub
+documentation][1].
 
 To summary, if `ssh-add` cannot open a connection to your authentication agent,
 you can run a local agent with:
@@ -125,10 +133,10 @@ Finally, check you are able to clone the repository:
     git clone ssh://git@github.com/SiliconLabs/wisun-br-linux
 
 If you still don't have access, maybe your key does not match the key of your
-Gihub account or you don't have permission to access the wisun-br-linux
+Gihub account or you don't have permission to access the `wisun-br-linux`
 repository.
 
-[3]: https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh
+[1]: https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh
 
 ### I want to use this architecture for production
 
@@ -176,7 +184,7 @@ Alternatively you can force a neighbor discovery on your Wi-SUN node:
 
 ### Wi-SUN can reach outside network, but can't reach docker host
 
-It is a [limitation of the macvlan interface][1]. This situation is actually not
+It is a [limitation of the macvlan interface][2]. This situation is actually not
 an error — it is the defined behavior of macvtap. Due to the way in which the
 host's physical Ethernet is attached to the macvtap bridge, traffic into that
 bridge from the guests that is forwarded to the physical interface cannot be
@@ -193,7 +201,7 @@ to use a secondary physical network interface exclusively for the guest.
     docker run -ti --privileged --rm --network=wisun-net --name=wisun-vm wisun-img
 
 
-[1]: https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Virtualization_Host_Configuration_and_Guest_Installation_Guide/App_Macvtap.html
+[2]: https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Virtualization_Host_Configuration_and_Guest_Installation_Guide/App_Macvtap.html
 
 ### Unable to launch the container on my Windows workstation
 
@@ -211,7 +219,7 @@ restart the docker container if you unplug the gateway.
 
 When using the proxy, it takes a few seconds to establish connection the first
 time a end device tries to access the outside. The problem is [ndppd does not
-receive locally generated neighbor solicitation][2] (A). The system unlocks when
+receive locally generated neighbor solicitation][3] (A). The system unlocks when
 a solicitation comes from outside (B).
 
         tun0  2 1.806167960 2a01:e35:2435:66a0:20d:6fff:fe20:c096 → 2a00:1450:4007:809::200e ICMPv6 104 Echo (ping) request id=0x0001, seq=0, hop limit=63
@@ -230,7 +238,7 @@ a solicitation comes from outside (B).
 
 The subnet mode does not suffers of this limitation.
 
-[2]: https://github.com/DanielAdolfsson/ndppd/issues/69
+[3]: https://github.com/DanielAdolfsson/ndppd/issues/69
 
 ### Can this image breaks my local network?
 
@@ -256,16 +264,8 @@ the first scenario is unlikely to happen.
 
 Anyway, if you use `site_local` mode, we recommend to use a dedicated network.
 
-### I try to use `--ws-*` parameters but the container is not able to select the device
-
-If several board are connected to the USB port, the container is not able to
-know which it has to use. Unplug the board you don't want to configure to
-workaround this limitation.
-
 Further improvements
 --------------------
-
-- tunslip6 should be able to daemonize
 
 - Replace radvd with a small RS/RA proxy. nd-proxy.c seems to mostly do the job,
   but:
@@ -276,14 +276,4 @@ Further improvements
 
 - Provide an example of Prefix Delegation and DHCPv6-PD
 
-- Check if it works with DHCPv6 instead of RA
-
 - Docker does not yet support '--ipam-driver=dhcp --ipam-opt dhcp_interface=eth0'
-
-Similar projects
-----------------
-
-[6lbr][3] has more or less the same goals than this project. It has probably
-more features, but it is also far more complex.
-
-[3]: https://github.com/cetic/6lbr/wiki
