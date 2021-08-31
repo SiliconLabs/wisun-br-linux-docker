@@ -37,11 +37,10 @@ Go to this repository and build the image with:
     DOCKER_BUILDKIT=1 docker build --build-arg "GIT_DESCRIBE=$(git describe --tag --match v*)" --ssh default -t wisun-img .
 
 Note that `DOCKER_BUILDKIT` and `--ssh` are necessary to authenticate to the
-Silabs private git repository. These options rely on `ssh-agent` launched on
-your host to authenticate to the git server. Therefore, if you encounter any
-problem with git access, check your ssh setup is correct.
+Silabs private git repository. If this step fail, check the section [I am unable
+to build the image](#i-am-unable-to-build-the-image)
 
-then, you may save a bit of bytes by removing the build environment and only
+Then, you may save a bit of bytes by removing the build environment and only
 keeping the final image:
 
     docker image prune
@@ -101,6 +100,36 @@ afterward with command wisun-device-traces:
 
 Bugs and limitations
 --------------------
+
+### I am unable to build the image
+
+In 99% of the cases, there is a problem to get the sources of wsbrd. Check if
+your key appears in output of:
+
+    ssh-add -l
+
+The process to working with ssh keys is lengthy described in GitHub
+documentation[3].
+
+To summary, if `ssh-add` cannot open a connection to your authentication agent,
+you can run a local agent with:
+
+    eval $(ssh-agent)
+
+If the agent has no identities, ensure that your key is available in` ~/.ssh`
+and register them with:
+
+    ssh-add
+
+Finally, check you are able to clone the repository:
+
+    git clone ssh://git@github.com/SiliconLabs/wisun-br-linux
+
+If you still don't have access, maybe your key does not match the key of your
+Gihub account or you don't have permission to access the wisun-br-linux
+repository.
+
+[3]: https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh
 
 ### I want to use this architecture for production
 
