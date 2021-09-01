@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.3
+
 FROM alpine:3.12 AS builder
 ARG GIT_DESCRIBE
 LABEL maintainer="Jérôme Pouiller <jerome.pouiller@silabs.com>"
