@@ -85,13 +85,12 @@ to configure Wi-SUN parameters, flash the radio board or get chip traces.
 
 See output of `--help` to get some information about Wi-SUN parameters.
 
-To flash the board, you need first to retrieve the Wi-SUN RCP image for your
-radio board. This image is not yet public. Contact SiliconLabs Wi-SUN team to
-get it. Then, you have to map the firmware file in the container using the
-docker `-v` option. Then, launch the container with `--flash` and the path of
-the firmware in the container:
+Your Silabs radio board must be flashed with the Wi-SUN RCP firmware. This
+firmware is included in the docker image. You can start the container with
+"--flash -" to flash it (replace "-" by another path to flash your custom
+firmware).
 
-    docker run -ti --privileged --rm --network=wisun-net --name=wisun-vm -v wisunbrcli-bh-brd4163a.bin:/tmp/fw.bin wisun-img --flash /tmp/fw.bin
+    docker run -ti --privileged --rm --network=wisun-net --name=wisun-vm wisun-img --flash -
 
 Finally you can get the traces using `-T`. You can also start the traces
 afterward with command wisun-device-traces:

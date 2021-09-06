@@ -34,7 +34,9 @@ Container options:
                       of the advertised prefix size. You may use it if the
                       router of your network is not able to manage the new route
                       itself.
-  -F, --flash=FW_PATH Flash radio board with FW_PATH.
+  -F, --flash=FW_PATH Flash radio board with FW_PATH. If FW_PATH is "-", flash
+                      built-in firmware which should work with most of the
+                      boards.
   -T, --chip-traces   Show traces from the chip.
   -s, --shell         Launch a shell on startup.
   -h, --help          Show this help.
@@ -411,7 +413,11 @@ while true; do
             shift 2
             ;;
         -F|--flash)
-            FIRMWARE=$2
+            if [ -z "$2" -o "$2" == "-" ]; then
+                FIRMWARE=/firmware-winsun-rcp.bin
+            else
+                FIRMWARE=$2
+            fi
             shift 2
             ;;
         -n|--ws-network)

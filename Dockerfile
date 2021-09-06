@@ -30,6 +30,7 @@ RUN apk add --no-cache libusb busybox-extras
 COPY --from=builder /etc/issue /etc/issue
 COPY --from=builder /usr/local /usr/local
 COPY init-container.sh /init
+COPY firmware-winsun-rcp-0.0.4.bin /firmware-winsun-rcp.bin
 COPY dhclient-hook-prefix-delegation /etc/dhcp/dhclient-exit-hooks.d/prefix_delegation
 COPY wisun-device-traces /usr/bin/wisun-device-traces
 # Trick: $GIT_DESCRIBE often changes, so place this line at the end to take
