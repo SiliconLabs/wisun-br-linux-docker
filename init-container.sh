@@ -114,18 +114,6 @@ check_privilege()
     ip link delete dummy0
 }
 
-launch_icmp_monitoring()
-{
-    # Interresting packets:
-    #     echo-request: 128
-    #     echo-reply: 129
-    #     router-solicitation: 133
-    #     router-advertisement: 134
-    #     neighbor-solicitation: 135
-    #     neighbor-advertisement: 136
-    tshark -i tun0 "icmp6 && (ip6[40] == 135 || ip6[40] == 136)" &
-}
-
 launch_dhcpc()
 {
     # This could improved, but we use dhcpc to get address and dhclient to get
@@ -293,7 +281,6 @@ run_proxy()
     launch_radvd $IPV6_NET
     launch_wsbrd
     launch_ndppd $IPV6_NET
-    launch_icmp_monitoring
     launch_last_process
 }
 
@@ -310,7 +297,6 @@ run_site_local()
     launch_radvd fd$SITE_PREFIX::/64 adv_prefix
     launch_wsbrd
     launch_ndppd fd$SITE_PREFIX::/64
-    launch_icmp_monitoring
     launch_last_process
 }
 
@@ -324,7 +310,6 @@ run_local()
     SITE_PREFIX=$(get_random_prefix)
     launch_radvd fd$SITE_PREFIX::/64
     launch_wsbrd
-    launch_icmp_monitoring
     launch_last_process
 }
 
@@ -344,7 +329,6 @@ run_subnet()
         launch_radvd $IPV6_NET
     fi
     launch_wsbrd
-    launch_icmp_monitoring
     launch_last_process
 }
 
@@ -365,7 +349,6 @@ run_dhcpv6pd()
         generate_radvd_conf bad:beef
     fi
     launch_dhclient
-    launch_icmp_monitoring
     launch_last_process
 }
 
