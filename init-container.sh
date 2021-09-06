@@ -133,8 +133,13 @@ launch_wsbrd()
 {
     [ -e "$UART" ] || die "Failed to detect $UART"
 
-    echo " ---> [1mLaunch wsbrd on $UART[0m"
-    wsbrd -u $UART$WSBRD_ARGS --network=$WS_NETWORK --domain=$WS_DOMAIN --key=$WS_KEY --cert=$WS_CERT --authority=$WS_AUTHORITY &
+    echo " ---> [1mLaunch wsbrd[0m"
+    echo "Command line:"
+    echo "    wsbrd -u $UART$WSBRD_ARGS --domain="$WS_DOMAIN" --network=\"$WS_NETWORK\"\\"
+    echo "          --key=\"$WS_KEY\"\\"
+    echo "          --cert=\"$WS_CERT\"\\"
+    echo "          --authority=\"$WS_AUTHORITY\""
+    wsbrd -u $UART$WSBRD_ARGS  --domain="$WS_DOMAIN" --network="$WS_NETWORK" --key="$WS_KEY" --cert="$WS_CERT" --authority="$WS_AUTHORITY" &
     WSBRD_PID=$!
 
     # We expect that accept_ra=2 and radvd is running on tun0
