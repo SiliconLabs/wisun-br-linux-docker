@@ -265,6 +265,7 @@ EOF
     echo "run \"program $FIRMWARE 0 reset\" on JLink probe"
     echo "program $FIRMWARE 0 reset" | nc 127.0.0.1 1002 > /dev/null
     kill $OPENOCD_PID
+    echo "You may have to hard-reset the board if it hangs"
 }
 
 run_proxy()
