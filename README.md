@@ -64,7 +64,7 @@ correct device name to the guest with `-d`).
 
 Launch a shell in your image using:
 
-    docker run -ti --privileged --network=wisun-net --name=wisun-vm wisun-img
+    docker run -ti --privileged --rm --network=wisun-net --name=wisun-vm wisun-img
 
 From now on, your Wi-SUN nodes should be able to interact with your IPv6
 network.
@@ -75,7 +75,7 @@ Note that the container accepts a few options which you can list with:
 
 You may want to open a shell into the container:
 
-    docker exec -it wisun-vm sh
+    docker exec -ti wisun-vm sh
 
 Using the JTAG link
 -------------------
@@ -91,12 +91,12 @@ to get it. Then, you have to map the firmware file in the container using the
 docker `-v` option. Then, launch the container with `--flash` and the path of
 the firmware in the container:
 
-    docker run -ti --privileged -v wisunbrcli-bh-brd4163a.bin:/tmp/fw.bin wisun-img --flash /tmp/fw.bin
+    docker run -ti --privileged --rm --network=wisun-net --name=wisun-vm -v wisunbrcli-bh-brd4163a.bin:/tmp/fw.bin wisun-img --flash /tmp/fw.bin
 
 Finally you can get the traces using `-T`. You can also start the traces
 afterward with command wisun-device-traces:
 
-    docker container exec -ti CONTAINER_ID wisun-device-traces
+    docker exec -ti wisun-vm wisun-device-traces
 
 Bugs and limitations
 --------------------
@@ -160,7 +160,7 @@ This happens when you use the macvlan driver. It is necessary to get an IP from
 the DHCP server of the host network. Just add `-D` when you run the docker to
 run a DHCP client:
 
-    docker run -ti --privileged --network=wisun-net wisun-br -D
+    docker run -ti --privileged --rm --network=wisun-net --name=wisun-vm wisun-img -D
 
 ### I have restarted my docker image and I can't ping my Wi-SUN device anymore
 
@@ -191,7 +191,7 @@ to use a secondary physical network interface exclusively for the guest.
     dhcpcd --release eth1
     docker network create -d macvlan -o parent=eth1 wisun-net
     ip link set dev eth1 up
-    docker run -ti --privileged --network=wisun-net wisun-br
+    docker run -ti --privileged --rm --network=wisun-net --name=wisun-vm wisun-img
 
 
 [1]: https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Virtualization_Host_Configuration_and_Guest_Installation_Guide/App_Macvtap.html
