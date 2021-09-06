@@ -5,10 +5,6 @@ LABEL maintainer="Jérôme Pouiller <jerome.pouiller@silabs.com>"
 RUN apk add build-base git
 RUN echo -n > /etc/issue
 
-WORKDIR /usr/src/
-COPY wsbrd-install.sh                         .
-RUN --mount=type=ssh ./wsbrd-install.sh
-
 WORKDIR /usr/src
 COPY ndppd-install.sh                          .
 COPY ndppd-0001-Fixes-strerror_r-GNU-XSI.patch .
@@ -18,6 +14,10 @@ RUN  ./ndppd-install.sh
 WORKDIR /usr/src/
 COPY openocd-install.sh                        .
 RUN  ./openocd-install.sh
+
+WORKDIR /usr/src/
+COPY wsbrd-install.sh                         .
+RUN --mount=type=ssh ./wsbrd-install.sh
 
 FROM alpine:3.12 AS runtime
 ARG GIT_DESCRIBE=<unknown>
