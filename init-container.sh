@@ -59,20 +59,24 @@ Note that random site-local prefixes are not routable (ie. you can't access
 outside with these).
 
 Wi-SUN parameters:
-  -n, --ws-network=NAME
-  -d, --ws-domain=CC
-  -m, --ws-mode=HEX
-  -c, --ws-class=NUM
-  -S, --ws-size=SIZE
-  -K, --ws-key=FILE
-  -C, --ws-cert=FILE
-  -A, --ws-authority=FILE
+  -n, --ws-network=NAME    Set Wi-SUN network name (default: Wi-SUN)
+  -d, --ws-domain=COUNTRY  Set Wi-SUN regulatory domain. Valid values: WW, EU,
+                           NA (default), JP...
+  -m, --ws-mode=VAL        Set operating mode. Valid values: 1a, 1b (default),
+                           2a, 2b, 3, 4a, 4b and 5
+  -c, --ws-class=VAL       Set operating class. Valid values: 1 (default), 2 or 3
+  -S, --ws-size=SIZE       Optimize network timings considering the number of
+                           expected nodes on the network. Valid values: AUTO
+                           (default), CERT (development and certification), S
+                           (< 100), M (100-800), L (800-2500), XL (> 2500)
+  -K, --ws-key=FILE        Private key (default: br_key.pem)
+  -C, --ws-cert=FILE       Certificate for the key (default: br_cert.pem)
+  -A, --ws-authority=FILE  Certificate of the authority (CA) (default:
+                           ca_cert.pem)
 
-Refer to the output \`wsbrd --help' for usage of these options.
-
-By default, this container uses embedded test certficates. If you provide your
-owns, don't forget to map the files into the container (passing option -v to
-\`docker run').
+By default, this container uses embedded test certficates (located in
+/usr/local/share/wsbrd/examples/). If you provide your owns, don't forget to map
+the files into the container (passing option -v to \`docker run').
 
 Examples:
 
