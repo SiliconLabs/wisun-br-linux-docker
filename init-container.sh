@@ -66,9 +66,9 @@ Wi-SUN parameters:
                            2a, 2b, 3, 4a, 4b and 5
   -c, --ws-class=VAL       Set operating class. Valid values: 1 (default), 2 or 3
   -S, --ws-size=SIZE       Optimize network timings considering the number of
-                           expected nodes on the network. Valid values: AUTO
-                           (default), CERT (development and certification), S
-                           (< 100), M (100-800), L (800-2500), XL (> 2500)
+                           expected nodes on the network. Valid values: CERT
+                           (development and certification), S (< 100, default),
+                           M (100-800), L (800-2500), XL (> 2500)
   -K, --ws-key=FILE        Private key (default: br_key.pem)
   -C, --ws-cert=FILE       Certificate for the key (default: br_cert.pem)
   -A, --ws-authority=FILE  Certificate of the authority (CA) (default:

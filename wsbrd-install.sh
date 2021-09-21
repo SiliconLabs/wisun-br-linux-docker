@@ -16,7 +16,7 @@ set -e
 apk add git openssh-client cmake ninja pkgconf linux-headers libnl3-dev libpcap-dev
 mkdir -p -m 0600 ~/.ssh
 ssh-keyscan github.com >> ~/.ssh/known_hosts
-git clone --depth=1 --quiet --branch=v0.1.0 ssh://git@github.com/SiliconLabs/wisun-br-linux ./wsbrd
+git clone --depth=1 --quiet --branch=v0.1.1 ssh://git@github.com/SiliconLabs/wisun-br-linux ./wsbrd
 cmake -S ./wsbrd -B ./wsbrd-build -G Ninja
 ninja -C ./wsbrd-build
 ninja -C ./wsbrd-build install
