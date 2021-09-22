@@ -12,20 +12,18 @@
 </table>
 
 In a Wi-SUN network, the Border Router (BR) is in charge of the management of
-the network (authentication, routing, etc...) and providing internet connectivity to the
+the network (authentication, routing, etc.) and providing internet connectivity to the
 network.
 
-To simplify the deployment and network configuration, all the work is done inside a Docker container. It
-aims to run on a Raspberry Pi, but it should work on any Linux host.
+This Docker image is provided to simplify the deployment and network configuration. It aims to run on a Raspberry Pi 4 and Raspberry Pi OS (a port of Debian for Raspberry Pi), but it should work on any Linux host.
 
-This implementation relies on an external EFR (Silicon Labs radio device)
-flashed with Silicon Labs Wi-SUN RCP firmware. The EFR has to be connected to
-the host using USB.  The docker will see it as a serial (UART) connection. In
-order to simplify deployment, this image is able to flash the correct firmware
-(see [Using the JTAG link](#using-the-jtag-link)).
+This implementation relies on an external Silicon Labs EFR32xG12 flashed with a dedicated Wi-SUN RCP (Radio Co-Processor) firmware. To this end, The EFR32 is connected to the host using USB. Through this connection, the Docker image sees it as a serial (UART) connection. The RCP image can be flashed in the EFR32 by the Docker image.
+(see [Using the JTAG link](#using-the-jtag-link)). This document aims at establishing the setup described in the image below.
+
+![Linux border router](./linux_br_image.png)
 
 The use of a network with IPv6 connectivity is encouraged. If IPv6 is not available,
-you will have to use "local" or "site-local" modes (these modes have some
+you can use "local" or "site-local" modes (these modes have some
 pitfalls, see below).
 
 # Installation
