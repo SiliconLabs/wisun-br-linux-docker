@@ -64,24 +64,18 @@ image breaks my local network?](#can-this-image-breaks-my-local-network)
 Check that the Wi-SUN BR device is available on `/dev/ttyACM0` (or pass the
 correct device name to the guest with `-d`).
 
-If you are starting the image for the first time, you probably want to flash the
-Wi-SUN BR device. Pass `--flash -` to the command below (see [Using the
-JTAG link](#using-the-jtag-link))
-
 Launch your image using:
 
     docker run -ti --privileged --rm --network=wisun-net --name=wisun-vm wisun-img
 
-From now on, your Wi-SUN nodes should be able to connect to your border router
-and be able to interact with your IPv6 network.
-
-You can stop the container with `<Ctrl+C>`.
+From now on, your Wi-SUN nodes should be able to interact with your IPv6
+network.
 
 Note that the container accepts a few options which you can list with:
 
     docker run -ti --privileged --rm wisun-img --help
 
-You may want to open a shell into the (running) container:
+You may want to open a shell into the container:
 
     docker exec -ti wisun-vm sh
 
