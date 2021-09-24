@@ -12,17 +12,23 @@
 </table>
 
 In a Wi-SUN network, the Border Router (BR) is in charge of the management of
-the network (authentication, routing, etc.) and providing internet connectivity to the
-network.
+the network (authentication, routing, etc.) and providing internet connectivity
+to the network.
 
-This Docker image is provided to simplify the deployment and network configuration. It aims to run on a Raspberry Pi and Raspberry Pi OS (a port of Debian for Raspberry Pi), but it should work on any Linux host.
+This Docker image is provided to simplify the deployment and network
+configuration. It aims to run on a Raspberry Pi and Raspberry Pi OS (a port of
+Debian for Raspberry Pi), but it should work on any Linux host.
 
-This implementation relies on an external Silicon Labs EFR32xG12 flashed with a dedicated Wi-SUN RCP (Radio Co-Processor) firmware. To this end, The EFR32 is connected to the host through USB. Using this connection, the Docker image sees the EFR32 device as a serial (UART) connection. This document aims at establishing the setup described in the image below.
+This implementation relies on an external Silicon Labs EFR32xG12 flashed with a
+dedicated Wi-SUN RCP (Radio Co-Processor) firmware. To this end, The EFR32 is
+connected to the host through USB. Using this connection, the Docker image sees
+the EFR32 device as a serial (UART) connection. This document aims at
+establishing the setup described in the image below.
 
 ![Linux border router](./linux_br_image.png)
 
-The use of a network with IPv6 connectivity is encouraged. If IPv6 is not available,
-you can use "local" or "site-local" modes (these modes have some
+The use of a network with IPv6 connectivity is encouraged. If IPv6 is not
+available, you can use "local" or "site-local" modes (these modes have some
 pitfalls, see below).
 
 # Prerequisites
@@ -33,9 +39,12 @@ The document requires the following hardware prerequisites:
 * A Silicon Labs WTSK main board
 * An EFR32MG12 or EFR32FG12 radio board supporting a sub-GHz band
 
-To flash Raspberry Pi OS on the SD card, follow [the steps described by the Raspberry Pi Foundation.](https://www.raspberrypi.org/software/)
+To flash Raspberry Pi OS on the SD card, follow [the steps described by the
+Raspberry Pi Foundation.](https://www.raspberrypi.org/software/)
 
-It is recommended to update and upgrade your OS. To do so, connect the Raspberry Pi to internet via Ethernet or Wi-Fi and open a console or SSH (Secure Shell) session. 
+It is recommended to update and upgrade your OS. To do so, connect the Raspberry
+Pi to internet via Ethernet or Wi-Fi and open a console or SSH (Secure Shell)
+session. 
 
 Update the package database:
 
@@ -47,7 +56,8 @@ Upgrade installed packages:
 
 # Build the Docker Image
 
-For the time being, the Docker image has to be built. To build and run Docker images, you first need to install the `docker` application.
+For the time being, the Docker image has to be built. To build and run Docker
+images, you first need to install the `docker` application.
 
     sudo apt-get install docker.io
 
@@ -56,7 +66,11 @@ Make sure that your current user is allowed to run Docker:
 
     sudo usermod -aG docker pi
 
-For the next step, the Raspberry Pi needs access to this private GitHub repository. We recommend you follow [GitHub guidelines on how to set up a new SSH key on your Pi.](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) Refer to the Linux documentation to create or use an SSH key. 
+For the next step, the Raspberry Pi needs access to this private GitHub
+repository. We recommend you follow [GitHub guidelines on how to set up a new
+SSH key on your
+Pi.](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
+Refer to the Linux documentation to create or use an SSH key. 
 
 You should now be able to clone the repository on your Raspberry Pi: 
 
@@ -80,7 +94,9 @@ keeping the final image:
 
     docker image prune
 
-If you have an IPv6 network, create a macvlan interface to allow the Docker image to access it (replace `eth0` by the name of you physical network interface):
+If you have an IPv6 network, create a macvlan interface to allow the Docker
+image to access it (replace `eth0` by the name of you physical network
+interface):
 
     sudo docker network create -d macvlan -o parent=eth0 wisun-net
 
@@ -95,22 +111,30 @@ inconvenience, we suggest to work with an isolated network. See also [Can this
 image break my local network?](#can-this-image-break-my-local-network)
 
 At this stage, you have:
-* A Docker image named `wisun-img`, running the Wi-SUN stack upper-layer and a communication protocol to control an EFR32 running the Wi-SUN RCP image.
-* A macvlan interface named `wisun-net`, allowing a Docker container to access one of the Raspberry Pi IP communication interface (by default `eth0`). 
+* A Docker image named `wisun-img`, running the Wi-SUN stack upper-layer and a
+  communication protocol to control an EFR32 running the Wi-SUN RCP image.
+* A macvlan interface named `wisun-net`, allowing a Docker container to access
+  one of the Raspberry Pi IP communication interface (by default `eth0`). 
 
-Before connecting the WSTK to your Linux host, start dmesg to monitor new connected devices:
+Before connecting the WSTK to your Linux host, start dmesg to monitor new
+connected devices:
 
     dmesg -w
 
-Next, connect the WSTK main board with the EFR32 radio board to the Raspberry Pi through USB. Check the name of the new connected device in the dmesg output (by default `/dev/ttyACM0`). If the device name is different, pass the correct device name with `-d` (`--device`) in the following `docker run` command.
+Next, connect the WSTK main board with the EFR32 radio board to the Raspberry Pi
+through USB. Check the name of the new connected device in the dmesg output (by
+default `/dev/ttyACM0`). If the device name is different, pass the correct
+device name with `-d` (`--device`) in the following `docker run` command.
 
 Launch your image using:
 
     docker run -ti --privileged --rm --network=wisun-net --name=wisun-vm wisun-img --flash -
 
-> The `--flash -` option flashes the EFR32 with the default RCP image. More information in the [Using the JTAG Link](#using-the-jtag-link) section.
+> The `--flash -` option flashes the EFR32 with the default RCP image. More
+> information in the [Using the JTAG Link](#using-the-jtag-link) section.
 
-From now on, the Linux Wi-SUN border router should be running and you should be able to connect Wi-SUN nodes to it.
+From now on, the Linux Wi-SUN border router should be running and you should be
+able to connect Wi-SUN nodes to it.
 
 Note that the Docker image accepts several options which you can list with:
 
@@ -125,18 +149,20 @@ You may want to open a shell into the container:
 
 # Using the JTAG Link
 
-The Docker image is able to use the JTAG link available with the Silicon Labs chips
-to configure the Wi-SUN parameters, flash the radio board or retrieve chip traces.
+The Docker image is able to use the JTAG link available with the Silicon Labs
+chips to configure the Wi-SUN parameters, flash the radio board or retrieve chip
+traces.
 
 You can start the container with `--flash -` to flash the connected board with
-the built-in firmware. This firmware works with the EFR23xG12 radio boards supporting a Wi-SUN sub-GHz RF band:
+the built-in firmware. This firmware works with the EFR23xG12 radio boards
+supporting a Wi-SUN sub-GHz RF band:
 
     docker run -ti --privileged --rm --network=wisun-net --name=wisun-vm wisun-img --flash -
 
 > Replace "-" by another path to flash a custom firmware.
 
 You can also use the JTAG link to retrieve traces from the radio board. You can
-either pass `-T` to the `docker run` command or start the traces afterward with 
+either pass `-T` to the `docker run` command or start the traces afterward with
 `wisun-device-traces` command:
 
     docker exec -ti wisun-vm wisun-device-traces
@@ -154,12 +180,13 @@ of:
     ssh-add -l
 
 The process to work with ssh keys is described at length in the [GitHub
-documentation][1]. To summarize, if `ssh-add` cannot open a connection to your authentication agent,
-you can run a local agent with:
+documentation][1]. To summarize, if `ssh-add` cannot open a connection to your
+authentication agent, you can run a local agent with:
 
     eval $(ssh-agent)
 
-If the agent has no identities, ensure that your key file is available under ` ~/.ssh` and register them with:
+If the agent has no identities, ensure that your key file is available under `
+~/.ssh` and register them with:
 
     ssh-add <key_file>
 
@@ -175,10 +202,12 @@ repository.
 
 ## I want to use this architecture for production
 
-By default, this Docker image uses a method called Neighbor Discovery Protocol Proxy (NDP Proxy). It works with most IPv6 network topologies without touching the network
-infrastructure.  However, it does not scale very well and you may find limitations in
-corner cases. For production, prefer the subnet mode (aka Prefix Delegation) or
-even better use DHCPv6-PD protocol (not presented in this Docker image).
+By default, this Docker image uses a method called Neighbor Discovery Protocol
+Proxy (NDP Proxy). It works with most IPv6 network topologies without touching
+the network infrastructure.  However, it does not scale very well and you may
+find limitations in corner cases. For production, prefer the subnet mode (aka
+Prefix Delegation) or even better use DHCPv6-PD protocol (not presented in this
+Docker image).
 
 ## I have no IPv6 network
 
@@ -198,7 +227,8 @@ the network.
 ## Cannot reach (IPv4) Internet from the container
 
 This happens when you use the macvlan driver. It is necessary to get an IP from
-the DHCP server of the host network. Just add `-D` when you run the Docker image to run a DHCP client:
+the DHCP server of the host network. Just add `-D` when you run the Docker image
+to run a DHCP client:
 
     docker run -ti --privileged --rm --network=wisun-net --name=wisun-vm wisun-img -D
 
@@ -244,7 +274,8 @@ WSL2.
 ## I have re-plugged the WSTK main board and nothings work anymore
 
 The Docker container does not (yet) support device hot-plugging. You have to
-restart the Docker container if you unplug the WSTK main board with the EFR32 radio board.
+restart the Docker container if you unplug the WSTK main board with the EFR32
+radio board.
 
 ## When I try to ping from my Wi-SUN Device, the reply is transmitted after 5s of latency
 
@@ -284,21 +315,23 @@ configuration and will use it. From here, there are two situations:
      some DNS records may contain IPv4 and IPv6 fields. In this case, the
      applications may try to use the new shiny IPv6 configuration. The hosts
      will forward IPv6 traffic to the Docker image. The image will return an
-     error. Most of the time, the application
-     will fallback to IPv4 and it will work. Else, the
-     application will just stop here with a failure.
+     error. Most of the time, the application will fallback to IPv4 and it will
+     work. Else, the application will just stop here with a failure.
 
 
 If you don't enforce `site_local`, the image will try to detect existing IPv6
-networks. `site_local` will be started only if no IPv6 network has been detected. The first scenario is unlikely to happen.
+networks. `site_local` will be started only if no IPv6 network has been
+detected. The first scenario is unlikely to happen.
 
 If you use `site_local` mode, we recommend to use a dedicated network.
 
 # Further improvements
 
-* Replace radvd with a small RS/RA (Router Solicitation/Router Advertisement) proxy. nd-proxy.c seems to mostly do the job, but:
+* Replace radvd with a small RS/RA (Router Solicitation/Router Advertisement)
+  proxy. nd-proxy.c seems to mostly do the job, but:
    1. for an unknown reason, it does not receive RS from tun0 and does not send
       RA to tun0 (while radvd is able to do that very well)
    2. it is written in C++
 * Provide an example of Prefix Delegation and DHCPv6-PD
-* Docker does not yet support `--ipam-driver=dhcp --ipam-opt dhcp_interface=eth0`
+* Docker does not yet support `--ipam-driver=dhcp --ipam-opt
+  dhcp_interface=eth0`
