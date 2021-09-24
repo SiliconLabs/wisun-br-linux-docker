@@ -102,7 +102,7 @@ Before connecting the WSTK to your Linux host, start dmesg to monitor new connec
 
     dmesg -w
 
-Next, connect the WSTK main board with the EFR32 radio board to the Raspberry Pi through USB. Check the name of the new connected device in the dmesg output (by default `/dev/ttyACM0`). If the device name is different, pass the correct device name with `-d` in the following `docker run` command.
+Next, connect the WSTK main board with the EFR32 radio board to the Raspberry Pi through USB. Check the name of the new connected device in the dmesg output (by default `/dev/ttyACM0`). If the device name is different, pass the correct device name with `-d` (`--device`) in the following `docker run` command.
 
 Launch your image using:
 
@@ -289,14 +289,14 @@ configuration and will use it. From here, there are two situations:
      application will just stop here with a failure.
 
 
-If you don't enforce `site_local`, the image will try to detect existent IPv6
-network. `site_local` will be started only if no IPv6 network has been detected. The first scenario is unlikely to happen.
+If you don't enforce `site_local`, the image will try to detect existing IPv6
+networks. `site_local` will be started only if no IPv6 network has been detected. The first scenario is unlikely to happen.
 
 If you use `site_local` mode, we recommend to use a dedicated network.
 
 # Further improvements
 
-* Replace radvd with a small RS/RA (Router Solicitation/Router Advertisement)proxy. nd-proxy.c seems to mostly do the job, but:
+* Replace radvd with a small RS/RA (Router Solicitation/Router Advertisement) proxy. nd-proxy.c seems to mostly do the job, but:
    1. for an unknown reason, it does not receive RS from tun0 and does not send
       RA to tun0 (while radvd is able to do that very well)
    2. it is written in C++
