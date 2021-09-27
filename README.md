@@ -109,10 +109,10 @@ interface):
 # Launching the Wi-SUN Docker Image
 
 > Before you continue, you have to be aware that, if no IPv6 network is detected
-(and no command line option prevents it), the image advertises a network
-configuration. It may impact the other hosts on your network. To avoid any
-inconvenience, we suggest working with an isolated network. See also [Can this
-image break my local network?](#can-this-image-break-my-local-network)
+> (and no command line option prevents it), the image advertises a network
+> configuration. It may impact the other hosts on your network. To avoid any
+> inconvenience, we suggest working with an isolated network. See also [Can this
+> image break my local network?](#can-this-image-break-my-local-network)
 
 At this stage, you have:
 * A Docker image named `wisun-img`, running the Wi-SUN stack upper-layer and a
@@ -148,8 +148,8 @@ You may want to open a shell into the container:
 
     docker exec -ti wisun-vm sh
 
-> Advanced users may want to drop the `--rm` option and work with `docker start`,
-`docker stop`, etc...
+> Advanced users may want to drop the `--rm` option and work with `docker
+> start`, `docker stop`, etc...
 
 # Using the JTAG Link
 
