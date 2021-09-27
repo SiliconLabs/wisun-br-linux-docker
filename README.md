@@ -5,7 +5,7 @@
   </td>
   <td align="left" valign="middle">
     <a href="https://wi-sun.org/">
-      <img src="Wi-SUN-logo.png" title="Wi-SUN" alt="Wi-SUN Logo" width="300"/>
+      <img src="pics/Wi-SUN-logo.png" title="Wi-SUN" alt="Wi-SUN Logo" width="300"/>
     </a>
   </td>
   </tr>
@@ -25,7 +25,7 @@ connected to the host through USB. Using this connection, the Docker image sees
 the EFR32 device as a serial (UART) connection. This document describes how to
 set up the system shown below.
 
-![Linux border router](./linux_br_image.png)
+![Linux border router](pics/linux_br_image.png)
 
 The use of a network with IPv6 connectivity is encouraged. If IPv6 is not
 available, you can use "local" or "site-local" modes (these modes have some
