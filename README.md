@@ -39,7 +39,7 @@ The document requires the following hardware prerequisites:
 * An EFR32MG12 or EFR32FG12 radio board supporting a sub-GHz band
 
 To flash Raspberry Pi OS on the SD card, follow [the steps described by the
-Raspberry Pi Foundation.](https://www.raspberrypi.org/software/)
+Raspberry Pi Foundation.][1]
 
 It is recommended to update and upgrade your OS. To do so, connect the Raspberry
 Pi to internet via Ethernet or Wi-Fi and open a console or SSH (Secure Shell)
@@ -52,6 +52,8 @@ Update the package database:
 Upgrade installed packages:
 
     sudo apt-get upgrade
+
+[1]: https://www.raspberrypi.org/software/
 
 # Build the Docker Image
 
@@ -68,9 +70,8 @@ Make sure that your current user is allowed to run Docker:
 
 For the next step, the Raspberry Pi needs access to this private GitHub
 repository. We recommend you follow [GitHub guidelines on how to set up a new
-SSH key on your
-Pi.](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
-Refer to the Linux documentation to create or use an SSH key. 
+SSH key on your Pi][2]. Refer to the Linux documentation to create or use an SSH
+key.
 
 You should now be able to clone the repository on your Raspberry Pi: 
 
@@ -100,7 +101,10 @@ interface):
 
     sudo docker network create -d macvlan -o parent=eth0 wisun-net
 
-> Details on Docker and macvlan can be found [here](https://docs.docker.com/network/macvlan/).
+> Details on Docker and macvlan can be found [here][3].
+
+[2]: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account
+[3]: https://docs.docker.com/network/macvlan/
 
 # Launching the Wi-SUN Docker Image
 
@@ -180,7 +184,7 @@ of:
     ssh-add -l
 
 The process to work with ssh keys is described at length in the [GitHub
-documentation][1]. To summarize, if `ssh-add` cannot open a connection to your
+documentation][4]. To summarize, if `ssh-add` cannot open a connection to your
 authentication agent, you can run a local agent with:
 
     eval $(ssh-agent)
@@ -198,7 +202,7 @@ If you still don't have access, maybe your key does not match the key of your
 GitHub account or you don't have permission to access the `wisun-br-linux`
 repository.
 
-[1]: https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh
+[4]: https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh
 
 ## I want to use this architecture for production
 
@@ -246,7 +250,7 @@ Alternatively you can force a neighbor discovery on your Wi-SUN node:
 
 ## Wi-SUN can reach an outside network, but can't reach Docker host
 
-It is a [limitation of the macvlan interface][2]. This situation is actually not
+It is a [limitation of the macvlan interface][5]. This situation is actually not
 an error — it is the defined behavior of macvtap. Due to the way in which the
 host's physical Ethernet is attached to the macvtap bridge, traffic into that
 bridge from the guests that is forwarded to the physical interface cannot be
@@ -262,7 +266,7 @@ to use a secondary physical network interface exclusively for the guest.
     ip link set dev eth1 up
     docker run -ti --privileged --rm --network=wisun-net --name=wisun-vm wisun-img
 
-[2]: https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Virtualization_Host_Configuration_and_Guest_Installation_Guide/App_Macvtap.html
+[5]: https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Virtualization_Host_Configuration_and_Guest_Installation_Guide/App_Macvtap.html
 
 ## Unable to launch the container on my Windows workstation
 
@@ -281,7 +285,7 @@ board.
 
 When using the proxy, it takes a few seconds to establish connection the first
 time an end device tries to access the outside. The problem is [ndppd does not
-receive locally generated neighbor solicitation][3] (A). The system unlocks when
+receive locally generated neighbor solicitation][6] (A). The system unlocks when
 a solicitation comes from outside (B).
 
         tun0  2 1.806167960 2a01:e35:2435:66a0:20d:6fff:fe20:c096 → 2a00:1450:4007:809::200e ICMPv6 104 Echo (ping) request id=0x0001, seq=0, hop limit=63
@@ -300,7 +304,7 @@ a solicitation comes from outside (B).
 
 The subnet mode does not suffer from this limitation.
 
-[3]: https://github.com/DanielAdolfsson/ndppd/issues/69
+[6]: https://github.com/DanielAdolfsson/ndppd/issues/69
 
 ## Can this image break my local network?
 
