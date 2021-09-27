@@ -22,7 +22,8 @@ configuration. It is developed for running on a Raspberry Pi and Raspberry Pi OS
 This implementation relies on an external Silicon Labs EFR32xG12 flashed with a
 dedicated Wi-SUN RCP (Radio Coprocessor) firmware. To this end, the EFR32 is
 connected to the host through USB. Using this connection, the Docker image sees
-the EFR32 device as a serial (UART) connection. This document describes how to set up the system shown below.
+the EFR32 device as a serial (UART) connection. This document describes how to
+set up the system shown below.
 
 ![Linux border router](./linux_br_image.png)
 
@@ -43,7 +44,7 @@ Raspberry Pi Foundation.][1]
 
 It is recommended to update and upgrade your OS. To do so, connect the Raspberry
 Pi to internet via Ethernet or Wi-Fi and open a console or SSH (Secure Shell)
-session. 
+session.
 
 Update the package database:
 
@@ -73,7 +74,7 @@ repository. We recommend you follow [GitHub guidelines on how to set up a new
 SSH key on your Pi][2]. Refer to the Linux documentation to create or use an SSH
 key.
 
-You should now be able to clone the repository on your Raspberry Pi: 
+You should now be able to clone the repository on your Raspberry Pi:
 
     git clone git@github.com:SiliconLabs/wisun-br-linux-docker.git
 
@@ -115,10 +116,10 @@ interface):
 > image break my local network?](#can-this-image-break-my-local-network)
 
 At this stage, you have:
-* A Docker image named `wisun-img`, running the Wi-SUN stack upper-layer and a
-  communication protocol to control an EFR32 running the Wi-SUN RCP image.
-* A macvlan interface named `wisun-net`, allowing a Docker container to access
-  one of the Raspberry Pi IP communication interfaces (by default `eth0`). 
+ * A Docker image named `wisun-img`, running the Wi-SUN stack upper-layer and a
+   communication protocol to control an EFR32 running the Wi-SUN RCP image.
+ * A macvlan interface named `wisun-net`, allowing a Docker container to access
+   one of the Raspberry Pi IP communication interfaces (by default `eth0`).
 
 Before connecting the mainboard to your Linux host, start dmesg to monitor new
 connected devices:
