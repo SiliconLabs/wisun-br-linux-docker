@@ -1,0 +1,25 @@
+
+v2.2
+----
+
+  - Rework documentation
+
+v2.1
+----
+
+  - Bump wsbrd to v1.1 (no changes for end user)
+
+v2.0
+----
+
+  - The Wi-SUN service now runs on the host
+  - Show version numbers on start-up
+  - Add way to flash the firmware from the docker image
+  - Provide a default firmware
+  - Add experimental support for DHCPv6-PD
+
+v1.0
+----
+
+  - Initial release
+
