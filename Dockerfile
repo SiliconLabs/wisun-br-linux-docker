@@ -20,7 +20,6 @@ COPY wsbrd-install.sh                         .
 RUN --mount=type=ssh ./wsbrd-install.sh
 
 FROM alpine:3.12 AS runtime
-ARG GIT_DESCRIBE=<unknown>
 RUN mkdir -p /run/radvd
 RUN apk add --no-cache radvd
 RUN apk add --no-cache ndisc6
@@ -36,6 +35,7 @@ COPY dhclient-hook-prefix-delegation /etc/dhcp/dhclient-exit-hooks.d/prefix_dele
 COPY wisun-device-traces /usr/bin/wisun-device-traces
 # Trick: $GIT_DESCRIBE often changes, so place this line at the end to take
 # advantage of the docker cache system.
+ARG GIT_DESCRIBE=<unknown>
 RUN sed -i "1iDocker image $GIT_DESCRIBE" /etc/issue
 
 ENTRYPOINT [ "/init" ]
