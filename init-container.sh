@@ -362,10 +362,13 @@ run_dhcpv6pd()
 run_auto()
 {
     HAVE_IPV6=
+    printf "Probe network"
     for i in $(seq 20); do
         ip -6 addr show scope global | grep -q eth0 && HAVE_IPV6=1 && break
+        printf "."
         sleep 0.2
     done
+    printf "\n"
     if [ "$HAVE_IPV6" ]; then
         echo " ---> [1mFound IPv6 network[0m"
         run_proxy
