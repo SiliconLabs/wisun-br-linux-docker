@@ -136,11 +136,11 @@ launch_wsbrd()
 
     echo " ---> [1mLaunch wsbrd[0m"
     echo "Command line:"
-    echo "    wsbrd -u $UART$WSBRD_ARGS --domain="$WS_DOMAIN" --network=\"$WS_NETWORK\"\\"
+    echo "    wsbrd -u $UART -F /etc/wsbrd.conf$WSBRD_ARGS --domain="$WS_DOMAIN" --network=\"$WS_NETWORK\"\\"
     echo "          --key=\"$WS_KEY\"\\"
     echo "          --cert=\"$WS_CERT\"\\"
     echo "          --authority=\"$WS_AUTHORITY\""
-    wsbrd -u $UART$WSBRD_ARGS  --domain="$WS_DOMAIN" --network="$WS_NETWORK" --key="$WS_KEY" --cert="$WS_CERT" --authority="$WS_AUTHORITY" &
+    wsbrd -u $UART -F /etc/wsbrd.conf$WSBRD_ARGS --domain="$WS_DOMAIN" --network="$WS_NETWORK" --key="$WS_KEY" --cert="$WS_CERT" --authority="$WS_AUTHORITY" &
     WSBRD_PID=$!
 
     # We expect that accept_ra=2 and radvd is running on tun0
