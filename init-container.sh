@@ -414,15 +414,15 @@ while true; do
             shift 2
             ;;
         -m|--ws-mode)
-            WSBRD_ARGS="$WSBRD_ARGS -m $2"
+            WSBRD_ARGS="$WSBRD_ARGS -o mode=$2"
             shift 2
             ;;
         -c|--ws-class)
-            WSBRD_ARGS="$WSBRD_ARGS -c $2"
+            WSBRD_ARGS="$WSBRD_ARGS -o class=$2"
             shift 2
             ;;
         -S|--ws-size)
-            WSBRD_ARGS="$WSBRD_ARGS -S $2"
+            WSBRD_ARGS="$WSBRD_ARGS -o size=$2"
             shift 2
             ;;
         -K|--ws-key)
