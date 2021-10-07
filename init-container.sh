@@ -64,7 +64,8 @@ Wi-SUN parameters:
                            NA (default), JP...
   -m, --ws-mode=VAL        Set operating mode. Valid values: 1a, 1b (default),
                            2a, 2b, 3, 4a, 4b and 5
-  -c, --ws-class=VAL       Set operating class. Valid values: 1 (default), 2 or 3
+  -c, --ws-class=VAL       Set operating class. Valid values: 1 (default), 2, 3
+                           or 4
   -S, --ws-size=SIZE       Optimize network timings considering the number of
                            expected nodes on the network. Valid values: CERT
                            (development and certification), S (< 100, default),
