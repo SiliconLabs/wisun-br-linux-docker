@@ -132,15 +132,16 @@ launch_dhclient()
 
 launch_wsbrd()
 {
+    IPV6_NET=$1
     [ -e "$UART" ] || die "Failed to detect $UART"
 
     echo " ---> [1mLaunch wsbrd[0m"
     echo "Command line:"
-    echo "    wsbrd -u $UART -F /etc/wsbrd.conf$WSBRD_ARGS --domain="$WS_DOMAIN" --network=\"$WS_NETWORK\"\\"
+    echo "    wsbrd -u $UART -F /etc/wsbrd.conf$WSBRD_ARGS -o ipv6_prefix=$IPV6_NET --domain="$WS_DOMAIN" --network=\"$WS_NETWORK\"\\"
     echo "          --key=\"$WS_KEY\"\\"
     echo "          --cert=\"$WS_CERT\"\\"
     echo "          --authority=\"$WS_AUTHORITY\""
-    wsbrd -u $UART -F /etc/wsbrd.conf$WSBRD_ARGS --domain="$WS_DOMAIN" --network="$WS_NETWORK" --key="$WS_KEY" --cert="$WS_CERT" --authority="$WS_AUTHORITY" &
+    wsbrd -u $UART -F /etc/wsbrd.conf$WSBRD_ARGS -o ipv6_prefix=$IPV6_NET --domain="$WS_DOMAIN" --network="$WS_NETWORK" --key="$WS_KEY" --cert="$WS_CERT" --authority="$WS_AUTHORITY" &
     WSBRD_PID=$!
 
     # We expect that accept_ra=2 and radvd is running on tun0
@@ -155,13 +156,6 @@ generate_radvd_conf()
     IPV6_NET=$1
     EXT_BEHAVIOR=$2
 
-    cat << EOF > /etc/radvd.conf
-interface tun0 {
-    AdvSendAdvert on;
-    IgnoreIfMissing on;
-    prefix $IPV6_NET { };
-};
-EOF
     case "$EXT_BEHAVIOR" in
         adv_prefix)
             cat << EOF >> /etc/radvd.conf
@@ -285,8 +279,7 @@ run_proxy()
     IPV6_NET=$(rdisc6 -r 10 -w 400 -q -1 eth0)
     [ "$IPV6_NET" ] || die "Failed to get IPv6 address"
 
-    launch_radvd $IPV6_NET
-    launch_wsbrd
+    launch_wsbrd $IPV6_NET
     launch_ndppd $IPV6_NET
     launch_last_process
 }
@@ -302,7 +295,7 @@ run_site_local()
 
     SITE_PREFIX=$(get_random_prefix)
     launch_radvd fd$SITE_PREFIX::/64 adv_prefix
-    launch_wsbrd
+    launch_wsbrd fd$SITE_PREFIX::/64
     launch_ndppd fd$SITE_PREFIX::/64
     launch_last_process
 }
@@ -315,8 +308,7 @@ run_local()
     sysctl -q net.ipv6.conf.all.accept_ra=2
 
     SITE_PREFIX=$(get_random_prefix)
-    launch_radvd fd$SITE_PREFIX::/64
-    launch_wsbrd
+    launch_wsbrd fd$SITE_PREFIX::/64
     launch_last_process
 }
 
@@ -332,10 +324,8 @@ run_subnet()
     IPV6_NET=${1:-fd$(get_random_prefix)::/64}
     if [ "$ADVERT_ROUTE" ]; then
         launch_radvd $IPV6_NET adv_route
-    else
-        launch_radvd $IPV6_NET
     fi
-    launch_wsbrd
+    launch_wsbrd $IPV6_NET
     launch_last_process
 }
 
@@ -352,8 +342,6 @@ run_dhcpv6pd()
     # dhclient will start radvd as soon as it will receive a DHCPv6-PD reply.
     if [ "$ADVERT_ROUTE" ]; then
         generate_radvd_conf bad:beef adv_route
-    else
-        generate_radvd_conf bad:beef
     fi
     launch_dhclient
     launch_last_process
