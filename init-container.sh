@@ -292,10 +292,10 @@ run_site_local()
     sysctl -q net.ipv6.conf.default.accept_ra=2
     sysctl -q net.ipv6.conf.all.accept_ra=2
 
-    SITE_PREFIX=$(get_random_prefix)
-    launch_radvd fd$SITE_PREFIX::/64 adv_prefix
-    launch_wsbrd fd$SITE_PREFIX::/64
-    launch_ndppd fd$SITE_PREFIX::/64
+    IPV6_NET=fd$(get_random_prefix)::/64
+    launch_radvd $IPV6_NET adv_prefix
+    launch_wsbrd $IPV6_NET
+    launch_ndppd $IPV6_NET
     launch_last_process
 }
 
@@ -306,8 +306,8 @@ run_local()
     sysctl -q net.ipv6.conf.default.accept_ra=2
     sysctl -q net.ipv6.conf.all.accept_ra=2
 
-    SITE_PREFIX=$(get_random_prefix)
-    launch_wsbrd fd$SITE_PREFIX::/64
+    IPV6_NET=fd$(get_random_prefix)::/64
+    launch_wsbrd $IPV6_NET
     launch_last_process
 }
 
