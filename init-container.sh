@@ -137,11 +137,8 @@ launch_wsbrd()
 
     echo " ---> [1mLaunch wsbrd[0m"
     echo "Command line:"
-    echo "    wsbrd -u $UART -F /etc/wsbrd.conf$WSBRD_ARGS -o ipv6_prefix=$IPV6_NET --domain="$WS_DOMAIN" --network=\"$WS_NETWORK\"\\"
-    echo "          --key=\"$WS_KEY\"\\"
-    echo "          --cert=\"$WS_CERT\"\\"
-    echo "          --authority=\"$WS_AUTHORITY\""
-    wsbrd -u $UART -F /etc/wsbrd.conf$WSBRD_ARGS -o ipv6_prefix=$IPV6_NET --domain="$WS_DOMAIN" --network="$WS_NETWORK" --key="$WS_KEY" --cert="$WS_CERT" --authority="$WS_AUTHORITY" &
+    echo "    wsbrd -u $UART -F /etc/wsbrd.conf$WSBRD_ARGS -o ipv6_prefix=$IPV6_NET --network=\"$WS_NETWORK\""
+    wsbrd -u $UART -F /etc/wsbrd.conf$WSBRD_ARGS -o ipv6_prefix=$IPV6_NET --network="$WS_NETWORK" &
     WSBRD_PID=$!
 
     # We expect that accept_ra=2 and radvd is running on tun0
@@ -369,10 +366,6 @@ run_auto()
 cat /etc/issue
 
 WS_NETWORK="Wi-SUN"
-WS_DOMAIN="NA"
-WS_KEY=/usr/local/share/wsbrd/examples/br_key.pem
-WS_CERT=/usr/local/share/wsbrd/examples/br_cert.pem
-WS_AUTHORITY=/usr/local/share/wsbrd/examples/ca_cert.pem
 OPTS=$(getopt -l shell,chip-traces,dhcp,device:,uart:,advert-route,flash:,ws-network:,ws-domain:,ws-mode:,ws-class:,ws-size:,ws-key:,ws-cert:,ws-authority:,help -- sTDu:rF:n:d:m:c:S:K:C:A:h "$@") || exit 1
 eval set -- "$OPTS"
 while true; do
@@ -410,7 +403,7 @@ while true; do
             shift 2
             ;;
         -d|--ws-domain)
-            WS_DOMAIN="$2"
+            WSBRD_ARGS="$WSBRD_ARGS -o domain=$2"
             shift 2
             ;;
         -m|--ws-mode)
@@ -426,15 +419,15 @@ while true; do
             shift 2
             ;;
         -K|--ws-key)
-            WS_KEY="$2"
+            WSBRD_ARGS="$WSBRD_ARGS -o key='$2'"
             shift 2
             ;;
         -C|--ws-cert)
-            WS_CERT="$2"
+            WSBRD_ARGS="$WSBRD_ARGS -o certificate='$2'"
             shift 2
             ;;
         -A|--ws-authority)
-            WS_AUTHORITY="$2"
+            WSBRD_ARGS="$WSBRD_ARGS -o authority='$2'"
             shift 2
             ;;
         -h|--help)
