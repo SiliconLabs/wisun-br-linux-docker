@@ -136,6 +136,8 @@ launch_wsbrd()
     [ -e "$UART" ] || die "Failed to detect $UART"
 
     echo " ---> [1mLaunch wsbrd[0m"
+    echo "Configuration file:"
+    sed -e 's/#.*//' -e '/^ *$/d' -e 's/^/    /' /etc/wsbrd.conf
     echo "Command line:"
     echo "    wsbrd -u $UART -F /etc/wsbrd.conf$WSBRD_ARGS -o ipv6_prefix=$IPV6_NET --network=\"$WS_NETWORK\""
     wsbrd -u $UART -F /etc/wsbrd.conf$WSBRD_ARGS -o ipv6_prefix=$IPV6_NET --network="$WS_NETWORK" &
