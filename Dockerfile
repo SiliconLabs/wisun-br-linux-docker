@@ -1,4 +1,6 @@
 # syntax=docker/dockerfile:1.3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2021, Silicon Labs
 
 FROM alpine:3.12 AS builder
 LABEL maintainer="Jérôme Pouiller <jerome.pouiller@silabs.com>"

@@ -109,11 +109,12 @@ interface):
 
 # Launching the Wi-SUN Docker Image
 
-> Before you continue, you have to be aware that, if no IPv6 network is detected
-> (and no command line option prevents it), the image advertises a network
-> configuration. It may impact the other hosts on your network. To avoid any
-> inconvenience, we suggest working with an isolated network. See also [Can this
-> image break my local network?](#can-this-image-break-my-local-network)
+> Before you continue, you have to be aware that by default the image will try
+> to detect existing networks. However this detection may fail (unusual network
+> configuration, DHCP slow to answer, etc...). If no network is detected (and no
+> command line option prevents it), this image advertises a network
+> configuration. It may impact the other hosts on your network. See also [Can
+> this image breaks my local network?](#can-this-image-breaks-my-local-network).
 
 At this stage, you have:
  * A Docker image named `wisun-img`, running the Wi-SUN stack upper-layer and a
