@@ -115,7 +115,7 @@ check_privilege()
     ip link delete dummy0
 }
 
-launch_dhcpc()
+launch_dhcp4()
 {
     if [ -s /run/dhcp/dhclient.pid ]; then
         [ -e /proc/$(cat /run/dhcp/dhclient.pid) ] && return
@@ -125,7 +125,7 @@ launch_dhcpc()
     dhclient -nw eth0
 }
 
-launch_dhclient()
+launch_dhcp6()
 {
     # This could improved, but we use dhcpc to get address and dhclient to get
     # prefix delegation
@@ -318,7 +318,7 @@ run_dhcpv6pd()
     if [ "$ADVERT_ROUTE" ]; then
         generate_radvd_conf bad:beef adv_route
     fi
-    launch_dhclient
+    launch_dhcp6
     launch_last_process
 }
 
@@ -357,7 +357,7 @@ while true; do
             shift 1
             ;;
         -D|--dhcp)
-            LAUNCH_DHCPC=1
+            LAUNCH_DHCP4=1
             shift 1
             ;;
         -u|--uart|--device)
@@ -425,7 +425,7 @@ check_privilege
 # If accept_ra=1, the default route is dropped when IP forwarding is enabled
 sysctl -q net.ipv6.conf.eth0.accept_ra=2
 sysctl -q net.ipv6.conf.all.disable_ipv6=0
-[ "$LAUNCH_DHCPC" ] && launch_dhcpc
+[ "$LAUNCH_DHCP4" ] && launch_dhcp4
 [ "$FIRMWARE" ] && flash_firmware
 
 case "$1" in
