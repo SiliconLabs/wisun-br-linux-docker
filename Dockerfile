@@ -36,7 +36,7 @@ COPY --from=builder /usr/local /usr/local
 COPY init-container.sh /init
 COPY wsbrd.conf /etc/wsbrd.conf
 COPY firmware-winsun-rcp-0.1.0.bin /firmware-winsun-rcp.bin
-COPY dhclient-hook-prefix-delegation /etc/dhcp/dhclient-exit-hooks.d/prefix_delegation
+COPY dhclient-hook-prefix-delegation /etc/dhclient-exit-hooks.d/prefix_delegation
 COPY wisun-device-traces /usr/bin/wisun-device-traces
 # Trick: $GIT_DESCRIBE often changes, so place this line at the end to take
 # advantage of the docker cache system.

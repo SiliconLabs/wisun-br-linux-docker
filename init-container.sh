@@ -127,9 +127,10 @@ launch_dhcp4()
 
 launch_dhcp6()
 {
-    # This could improved, but we use dhcpc to get address and dhclient to get
-    # prefix delegation
-    dhclient -P eth0
+    if [ -s /run/dhcp/dhclient6.pid ]; then
+        [ -e /proc/$(cat /run/dhcp/dhclient6.pid) ] && return
+    fi
+    dhclient -nw -P eth0
 }
 
 launch_wsbrd()
@@ -313,12 +314,27 @@ run_dhcpv6pd()
 {
     sysctl -q net.ipv6.conf.all.forwarding=1
 
-    launch_tunslip6
-    # dhclient will start radvd as soon as it will receive a DHCPv6-PD reply.
-    if [ "$ADVERT_ROUTE" ]; then
-        generate_radvd_conf bad:beef adv_route
-    fi
+    # Should comply with RFC6204
     launch_dhcp6
+    printf "Wait for DHCP reply"
+    for i in $(seq 20); do
+        [ -e /tmp/dhcpv6pd.lease ] && break
+        printf "."
+        sleep 0.2
+    done
+    printf "\n"
+    [ -e /tmp/dhcpv6pd.lease ] || die "Can't get prefix delegation"
+
+    IPV6_PREFIX_LEN="$(cat /tmp/dhcpv6pd.lease | sed 's:.*/::')"
+    IPV6_PREFIX="$(cat /tmp/dhcpv6pd.lease | sed 's:/.*::')"
+    [ -n "$IPV6_PREFIX_LEN" ] || die "Can't get prefix delegation"
+    [ -n "$IPV6_PREFIX" ] || die "Can't get prefix delegation"
+    [ "$IPV6_PREFIX_LEN" -le 64 ] || die "IPv6 prefix must be at least /64"
+    IPV6_NET=$IPV6_PREFIX/64
+    if [ "$ADVERT_ROUTE" ]; then
+        launch_radvd $IPV6_NET adv_route
+    fi
+    launch_wsbrd $IPV6_NET
     launch_last_process
 }
 
