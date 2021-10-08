@@ -26,6 +26,7 @@ RUN apk add --no-cache radvd
 RUN apk add --no-cache ndisc6
 RUN apk add --no-cache libstdc++
 RUN apk add --no-cache tshark
+RUN apk add --no-cache dhclient
 # busybox-extras contains "telnet"
 RUN apk add --no-cache libusb busybox-extras
 COPY --from=builder /etc/issue /etc/issue

@@ -117,10 +117,12 @@ check_privilege()
 
 launch_dhcpc()
 {
-    # This could improved, but we use dhcpc to get address and dhclient to get
-    # prefix delegation
+    if [ -s /run/dhcp/dhclient.pid ]; then
+        [ -e /proc/$(cat /run/dhcp/dhclient.pid) ] && return
+    fi
     umount /etc/resolv.conf
-    udhcpc -i eth0
+    ip -4 route flush dev eth0 default
+    dhclient -nw eth0
 }
 
 launch_dhclient()
