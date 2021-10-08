@@ -53,7 +53,7 @@ Modes:
                   prefix using DHCPv6-PD (experimental). If PREFIX is not
                   defined, generate a random site-local one.
   auto            Detect if a local IPv6 network is available and launch
-                  \`site_local' or \`proxy' accordingly.
+                  \`local', \`site_local' or \`proxy' accordingly.
 
 Note that random site-local prefixes are not routable (ie. you can't access
 outside with these).
@@ -324,19 +324,25 @@ run_dhcpv6pd()
 
 run_auto()
 {
+    HAVE_IPV4=
     HAVE_IPV6=
+    launch_dhcp4
     printf "Probe network"
     for i in $(seq 20); do
         ip -6 addr show scope global | grep -q eth0 && HAVE_IPV6=1 && break
-        printf "."
+        [ -s /var/lib/dhcp/dhclient.leases ] && HAVE_IPV4=1
         sleep 0.2
+        printf "."
     done
     printf "\n"
     if [ "$HAVE_IPV6" ]; then
-        echo " ---> [1mFound IPv6 network[0m"
+        echo " ---> [1mFound IPv6 network (launch proxy mode)[0m"
         run_proxy
+    elif [ "$HAVE_IPV4" ]; then
+        echo " ---> [1mFound IPv4 network (launch local mode)[0m"
+        run_local
     else
-        echo " ---> [1mNo network found[0m"
+        echo " ---> [1mNo network found (launch site_local mode)[0m"
         run_site_local
     fi
 }
