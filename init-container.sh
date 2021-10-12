@@ -143,8 +143,7 @@ launch_wsbrd()
     wsbrd -u $UART -F /etc/wsbrd.conf$WSBRD_ARGS -o ipv6_prefix=$IPV6_NET --network="$WS_NETWORK" &
     WSBRD_PID=$!
 
-    # We expect that accept_ra=2 and radvd is running on tun0
-    for i in $(seq 10); do
+    for i in $(seq 100); do
         ip -6 addr show scope global | grep -q tun0 && break
         sleep 0.2
     done
