@@ -2,7 +2,7 @@
 # vim: set sw=4 expandtab:
 #
 # Copyright 2021, Silicon Labs
-# SPDX-License-Identifier: zlib
+# SPDX-License-Identifier: Apache-2.0
 # Main authors:
 #     - Jérôme Pouiller <jerome.pouiller@silabs.com>
 #
