@@ -1,3 +1,15 @@
+v2.3
+----
+
+  - Update wsbrd version to v0.2.0. radvd is no more necessary now.
+  - Start to use a configuration file for wsbrd. So, the command line used to
+    run wsbrd is now simpler.
+  - Do not advertise IPv6 network if an IPv4 network is detected
+  - Fix support for -D
+  - Improve DHCPv6-PD. unfortunatly, it is still experimental since correct
+    implementation of RFC6204 is still rare on the market
+  - Add progress bar when probing network
+  - Fix range of valid Wi-SUN classes
 
 v2.2
 ----
