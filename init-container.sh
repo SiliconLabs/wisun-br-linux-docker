@@ -133,6 +133,11 @@ launch_dhcp6()
     dhclient -nw -P --prefix-len-hint 64 eth0
 }
 
+launch_dbus()
+{
+    dbus-daemon --system
+}
+
 launch_wsbrd()
 {
     IPV6_NET=$1
@@ -447,6 +452,7 @@ check_privilege
 # If accept_ra=1, the default route is dropped when IP forwarding is enabled
 sysctl -q net.ipv6.conf.eth0.accept_ra=2
 sysctl -q net.ipv6.conf.all.disable_ipv6=0
+launch_dbus
 [ "$LAUNCH_DHCP4" ] && launch_dhcp4
 [ "$FIRMWARE" ] && flash_firmware
 

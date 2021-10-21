@@ -27,6 +27,8 @@ RUN --mount=type=ssh ./wsbrd-install.sh
 FROM alpine:3.12 AS runtime
 RUN mkdir -p /run/radvd
 RUN mkdir -p /var/lib/wsbrd
+RUN apk add --no-cache libelogind
+RUN apk add --no-cache elogind
 RUN apk add --no-cache radvd
 RUN apk add --no-cache ndisc6
 RUN apk add --no-cache libstdc++
@@ -35,6 +37,7 @@ RUN apk add --no-cache dhclient
 # busybox-extras contains "telnet"
 RUN apk add --no-cache libusb busybox-extras
 COPY --from=builder /etc/issue /etc/issue
+COPY --from=builder /etc/dbus-1/system.d /etc/dbus-1/system.d
 COPY --from=builder /usr/local /usr/local
 COPY init-container.sh /init
 COPY wsbrd.conf /etc/wsbrd.conf

@@ -11,7 +11,7 @@ set -e
 # This script expects to run as root
 [ $(id -u) == 0 ]
 
-apk add git openssh-client cmake ninja pkgconf linux-headers libnl3-dev libpcap-dev
+apk add git openssh-client cmake ninja pkgconf linux-headers libnl3-dev libpcap-dev elogind-dev
 if [ ! -d wsbrd ]; then
     # We are going to use SSH agent to authenticate to git repository
     [ -n "$SSH_AUTH_SOCK" ]
