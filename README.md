@@ -348,6 +348,14 @@ detected. The first scenario is unlikely to happen.
 
 If you use `site_local` mode, we recommend using a dedicated network.
 
+## I get `Error Connecting DP: cannot read IDR` when I try to flash
+
+Check the power supply of the RF board (also check that RF board is correctly
+present).
+
+On the WTSK mainboard the switch labelled `BATT/USB/AEM` must be set
+to `AEM`.
+
 # Further improvements
 
 * Replace radvd with a small RS/RA (Router Solicitation/Router Advertisement)
