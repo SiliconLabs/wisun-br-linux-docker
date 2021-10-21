@@ -130,7 +130,7 @@ launch_dhcp6()
     if [ -s /run/dhcp/dhclient6.pid ]; then
         [ -e /proc/$(cat /run/dhcp/dhclient6.pid) ] && return
     fi
-    dhclient -nw -P --prefix-len-hint=64 eth0
+    dhclient -nw -P --prefix-len-hint 64 eth0
 }
 
 launch_wsbrd()
