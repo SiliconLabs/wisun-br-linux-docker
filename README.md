@@ -89,7 +89,9 @@ Build the image with:
 Note that `DOCKER_BUILDKIT` and `--ssh` are necessary to authenticate to the
 Github private git repository. If this step fails, check the section [I have an
 error while retrieving `wsbrd`
-sources.](#i-have-an-error-while-retrieving-wsbrd-sources)
+sources.](#i-have-an-error-while-retrieving-wsbrd-sources). Alternatively, you
+can ask to Docker to [use a local copy of
+`wsbrd`](#how-to-use-a-local-copy-of-wsbrd-sources).
 
 You may save memory by removing the build environment and only keeping the final
 image:
@@ -205,6 +207,21 @@ GitHub account or you don't have permission to access the `wisun-br-linux`
 repository.
 
 [4]: https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh
+
+## How to use a local copy of `wsbrd` sources
+
+During the build, the Dockerfile checks if directory `wisun-br-linux` exists. In
+this case, Dockerfile uses this directory instead of cloning the original
+repository. So, you can do:
+
+    git clone ssh://git@github.com/SiliconLabs/wisun-br-linux
+    docker build --build-arg "GIT_DESCRIBE=$(git describe --tag --match v*)" -t wisun-img .
+
+
+> Option `--ssh default` is no more necessary
+
+You have to ensure the version of `wisun-br-linux` you provide is compatible
+with this current Docker image.
 
 ## I want to use this architecture for production
 
