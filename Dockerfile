@@ -18,6 +18,9 @@ COPY openocd-install.sh                        .
 RUN  ./openocd-install.sh
 
 WORKDIR /usr/src/
+# The [x] allow to change wisun-br-linux into a pattern, so Docker won't
+# complain if does not exist
+COPY wisun-br-linu[x]                         wsbrd
 COPY wsbrd-install.sh                         .
 RUN --mount=type=ssh ./wsbrd-install.sh
 

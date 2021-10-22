@@ -10,13 +10,15 @@ set -e
 
 # This script expects to run as root
 [ $(id -u) == 0 ]
-# This script will use SSH agent to authenticate to git repository
-[ -n "$SSH_AUTH_SOCK" ]
 
 apk add git openssh-client cmake ninja pkgconf linux-headers libnl3-dev libpcap-dev
-mkdir -p -m 0600 ~/.ssh
-ssh-keyscan github.com >> ~/.ssh/known_hosts
-git clone --depth=1 --quiet --branch=v0.2.1 ssh://git@github.com/SiliconLabs/wisun-br-linux ./wsbrd
+if [ ! -d wsbrd ]; then
+    # We are going to use SSH agent to authenticate to git repository
+    [ -n "$SSH_AUTH_SOCK" ]
+    mkdir -p -m 0600 ~/.ssh
+    ssh-keyscan github.com >> ~/.ssh/known_hosts
+    git clone --depth=1 --quiet --branch=v0.2.1 ssh://git@github.com/SiliconLabs/wisun-br-linux ./wsbrd
+fi
 cmake -S ./wsbrd -B ./wsbrd-build -G Ninja
 ninja -C ./wsbrd-build
 ninja -C ./wsbrd-build install
