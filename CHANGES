@@ -1,3 +1,9 @@
+v2.3.1
+------
+
+  - Allow to use a local copy of wisun-br-linux sources.
+  - Fix error when launching DHCPv6-PD
+
 v2.3
 ----
 
