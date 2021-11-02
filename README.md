@@ -34,10 +34,10 @@ pitfalls, see below).
 # Prerequisites
 
 The document requires the following hardware prerequisites:
-* A Raspberry Pi 3 Model B+ or newer
-* An SD card of at least 8 GB
-* A Silicon Labs WTSK mainboard
-* An EFR32MG12 or EFR32FG12 radio board supporting a sub-GHz band
+  * A Raspberry Pi 3 Model B+ or newer
+  * An SD card of at least 8 GB
+  * A Silicon Labs WTSK mainboard
+  * An EFR32MG12 or EFR32FG12 radio board supporting a sub-GHz band
 
 To flash Raspberry Pi OS on the SD card, follow [the steps described by the
 Raspberry Pi Foundation.][1]
@@ -119,10 +119,10 @@ interface):
 > this image breaks my local network?](#can-this-image-breaks-my-local-network).
 
 At this stage, you have:
- * A Docker image named `wisun-img`, running the Wi-SUN stack upper-layer and a
-   communication protocol to control an EFR32 running the Wi-SUN RCP image.
- * A macvlan interface named `wisun-net`, allowing a Docker container to access
-   one of the Raspberry Pi IP communication interfaces (by default `eth0`).
+  * A Docker image named `wisun-img`, running the Wi-SUN stack upper-layer and a
+    communication protocol to control an EFR32 running the Wi-SUN RCP image.
+  * A macvlan interface named `wisun-net`, allowing a Docker container to access
+    one of the Raspberry Pi IP communication interfaces (by default `eth0`).
 
 Before connecting the mainboard to your Linux host, start dmesg to monitor new
 connected devices:
