@@ -1,3 +1,12 @@
+v2.4
+----
+
+  - Bump wsbrd to v1.0.0
+  - Bump built-in RCP to v0.4.0
+  - Include support for DBus. User can now run commands like:
+        docker exec wisun-vm busctl introspect com.silabs.Wisun.BorderRouter /com/silabs/Wisun/BorderRouter
+  - Remove tshark so, the size of the image greatly shrink (150MB -> 50MB)
+
 v2.3.1
 ------
 
@@ -25,7 +34,7 @@ v2.2
 v2.1
 ----
 
-  - Bump wsbrd to v1.1 (no changes for end user)
+  - Bump wsbrd to v0.1.1 (no changes for end user)
 
 v2.0
 ----
