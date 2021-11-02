@@ -175,6 +175,24 @@ either pass `-T` to the `docker run` command or start the traces afterward with
 
     docker exec -ti wisun-vm wisun-device-traces
 
+# Using DBus interface
+
+From 0.3.0, wsbrd offer a DBus interface to interact with the border router.
+This image include [`busctl`][6] a generic tools to communicate with DBus. So, user
+can run commands like:
+
+    busctl introspect com.silabs.Wisun.BorderRouter /com/silabs/Wisun/BorderRouter
+
+Obviously, this command only work from the inside the docker. So, from outside
+the Docker, the full command is:
+
+   docker exec wisun-vm busctl introspect com.silabs.Wisun.BorderRouter /com/silabs/Wisun/BorderRouter
+
+> The formal specification of the DBus interface is not yet written, however
+> most of the command are self-described.
+
+[6]: https://www.freedesktop.org/software/systemd/man/busctl.html
+
 # Bugs and Limitations
 
 ## I have an error while retrieving `wsbrd` sources
