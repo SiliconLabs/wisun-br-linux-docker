@@ -63,6 +63,8 @@ images, first install the `docker` application.
 
     sudo apt-get install docker.io
 
+> This image is compatible with Docker 20 and newer (Debian 11 or newer).
+
 Make sure that your current user is allowed to run Docker:
 
     sudo usermod -aG docker pi
