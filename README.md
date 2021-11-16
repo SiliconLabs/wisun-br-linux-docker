@@ -178,18 +178,32 @@ either pass `-T` to the `docker run` command or start the traces afterward with
 # Using DBus interface
 
 From 0.3.0, wsbrd offer a DBus interface to interact with the border router.
-This image include [`busctl`][6] a generic tools to communicate with DBus. So, user
-can run commands like:
+This image include [`busctl`][6] a generic tools to communicate with DBus. So,
+user can run commands like:
 
     busctl introspect com.silabs.Wisun.BorderRouter /com/silabs/Wisun/BorderRouter
 
 Obviously, this command only work from the inside the docker. So, from outside
 the Docker, the full command is:
 
-   docker exec wisun-vm busctl introspect com.silabs.Wisun.BorderRouter /com/silabs/Wisun/BorderRouter
+    docker exec wisun-vm busctl introspect com.silabs.Wisun.BorderRouter /com/silabs/Wisun/BorderRouter
 
 > The formal specification of the DBus interface is not yet written, however
 > most of the command are self-described.
+
+Here are a few examples of things you can using DBus.
+
+Retrieve GAKs:
+
+    busctl --user get-property com.silabs.Wisun.BorderRouter /com/silabs/Wisun/BorderRouter com.silabs.Wisun.BorderRouter Gaks
+
+Monitor GAKs changes:
+
+    busctl --match=type=signal --user monitor com.silabs.Wisun.BorderRouter
+
+Revoke a EUI64:
+
+    busctl --user call com.silabs.Wisun.BorderRouter /com/silabs/Wisun/BorderRouter com.silabs.Wisun.BorderRouter RevokeNode ay 8 0x01 0x23 0x34 0x56 0x78 0x9A 0xBC 0xDE
 
 [6]: https://www.freedesktop.org/software/systemd/man/busctl.html
 
