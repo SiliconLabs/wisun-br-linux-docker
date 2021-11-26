@@ -12,7 +12,7 @@ set -e
 [ $(id -u) == 0 ]
 
 apk add git libtool autoconf automake pkgconf libusb-dev
-git clone --quiet -b v0.11.0 https://github.com/ntfreak/openocd.git ./openocd
+git clone --depth=1 --quiet --branch=v0.11.0 https://github.com/ntfreak/openocd ./openocd
 git -C ./openocd submodule update --init --recursive
 (cd ./openocd && ./bootstrap)
 # Build out-of-source else OpenOCD version will display 'x.x.x-dirty'
