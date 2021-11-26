@@ -23,4 +23,4 @@ cmake -S ./wsbrd -B ./wsbrd-build -G Ninja
 ninja -C ./wsbrd-build
 ninja -C ./wsbrd-build install
 echo -n "Built with wsbrd " >> /etc/issue
-git -C ./wsbrd describe --tags --dirty --match "*v[0-9].[0-9]*" >> /etc/issue
+(git -C ./wsbrd describe --tags --dirty --match "*v[0-9].[0-9]*" || echo '<unknown version>') >> /etc/issue
