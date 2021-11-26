@@ -17,6 +17,11 @@ WORKDIR /usr/src/
 COPY openocd-install.sh                        .
 RUN  ./openocd-install.sh
 
+# The developement release of wsbrd depends on external mbedtls
+WORKDIR /usr/src/
+COPY mbedtls-install.sh                        .
+RUN  ./mbedtls-install.sh
+
 WORKDIR /usr/src/
 # The [x] allow to change wisun-br-linux into a pattern, so Docker won't
 # complain if does not exist
