@@ -12,7 +12,7 @@ set -e
 [ $(id -u) == 0 ]
 
 apk add git linux-headers
-git clone --quiet https://github.com/DanielAdolfsson/ndppd.git ./ndppd
+git clone --depth=1 --quiet https://github.com/DanielAdolfsson/ndppd ./ndppd
 git -C ./ndppd reset --hard e01d67a
 git -C ./ndppd apply ../ndppd-0001-Fixes-strerror_r-GNU-XSI.patch
 git -C ./ndppd apply ../ndppd-0002-fix-poll-header.patch
