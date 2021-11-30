@@ -1,3 +1,9 @@
+v2.4.1
+------
+
+  - Bump wsbrd to v1.0.1
+  - Include mbedTLS (necessary for future wsbrd releases)
+
 v2.4
 ----
 
