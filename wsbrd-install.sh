@@ -17,7 +17,7 @@ if [ ! -d wsbrd ]; then
     [ -n "$SSH_AUTH_SOCK" ]
     mkdir -p -m 0600 ~/.ssh
     ssh-keyscan github.com >> ~/.ssh/known_hosts
-    git clone --depth=1 --quiet --branch=v1.0.0 ssh://git@github.com/SiliconLabs/wisun-br-linux ./wsbrd
+    git clone --depth=1 --quiet --branch=v1.0.1 ssh://git@github.com/SiliconLabs/wisun-br-linux ./wsbrd
 fi
 cmake -S ./wsbrd -B ./wsbrd-build -G Ninja
 ninja -C ./wsbrd-build
