@@ -191,7 +191,7 @@ the Docker, the full command is:
     docker exec wisun-vm busctl introspect com.silabs.Wisun.BorderRouter /com/silabs/Wisun/BorderRouter
 
 > The formal specification of the DBus interface is not yet written, however
-> most of the command are self-described.
+> most of the commands are self-described.
 
 Here are a few examples of things you can using DBus.
 
