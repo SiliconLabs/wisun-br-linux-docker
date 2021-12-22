@@ -13,11 +13,7 @@ set -e
 
 apk add git openssh-client cmake ninja pkgconf linux-headers libnl3-dev elogind-dev
 if [ ! -d wsbrd ]; then
-    # We are going to use SSH agent to authenticate to git repository
-    [ -n "$SSH_AUTH_SOCK" ]
-    mkdir -p -m 0600 ~/.ssh
-    ssh-keyscan github.com >> ~/.ssh/known_hosts
-    git clone --depth=1 --quiet --branch=v1.0.4 ssh://git@github.com/SiliconLabs/wisun-br-linux ./wsbrd
+    git clone --depth=10 --quiet --branch=v1.0.4 https://github.com/SiliconLabs/wisun-br-linux ./wsbrd
 fi
 cmake -S ./wsbrd -B ./wsbrd-build -G Ninja
 ninja -C ./wsbrd-build

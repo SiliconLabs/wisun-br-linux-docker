@@ -27,7 +27,7 @@ WORKDIR /usr/src/
 # complain if does not exist
 COPY wisun-br-linu[x]                         wsbrd
 COPY wsbrd-install.sh                         .
-RUN --mount=type=ssh ./wsbrd-install.sh
+RUN ./wsbrd-install.sh
 
 FROM alpine:3.12 AS runtime
 RUN mkdir -p /run/radvd
