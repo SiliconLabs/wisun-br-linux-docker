@@ -1,3 +1,9 @@
+v2.4.3
+------
+
+  - Solve issues with Github authentication. Since the repository is now public,
+    we can just use https transport.
+
 v2.4.2
 ------
 
