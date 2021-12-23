@@ -71,11 +71,6 @@ Make sure that your current user is allowed to run Docker:
 
 > You have to log out and back in for this to take effect.
 
-For the next step, the Raspberry Pi needs access to this private GitHub
-repository. We recommend you follow [GitHub guidelines on how to set up a new
-SSH key on your Pi][2]. Refer to the Linux documentation to create or use an SSH
-key.
-
 You should now be able to clone the repository on your Raspberry Pi:
 
     git clone git@github.com:SiliconLabs/wisun-br-linux-docker.git
@@ -86,14 +81,7 @@ Enter the `wisun-br-linux-docker` directory:
 
 Build the image with:
 
-    DOCKER_BUILDKIT=1 docker build --build-arg "GIT_DESCRIBE=$(git describe --tag --match v*)" --ssh default -t wisun-img .
-
-Note that `DOCKER_BUILDKIT` and `--ssh` are necessary to authenticate to the
-Github private git repository. If this step fails, check the section [I have an
-error while retrieving `wsbrd`
-sources.](#i-have-an-error-while-retrieving-wsbrd-sources). Alternatively, you
-can ask to Docker to [use a local copy of
-`wsbrd`](#how-to-use-a-local-copy-of-wsbrd-sources).
+    DOCKER_BUILDKIT=1 docker build --build-arg "GIT_DESCRIBE=$(git describe --tag --match v*)" -t wisun-img .
 
 You may save memory by removing the build environment and only keeping the final
 image:
@@ -108,7 +96,6 @@ interface):
 
 > Details on Docker and macvlan can be found [here][3].
 
-[2]: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account
 [3]: https://docs.docker.com/network/macvlan/
 
 # Launching the Wi-SUN Docker Image
@@ -210,37 +197,6 @@ Revoke a EUI64:
 [6]: https://www.freedesktop.org/software/systemd/man/busctl.html
 
 # Bugs and Limitations
-
-## I have an error while retrieving `wsbrd` sources
-
-`wsbrd` is hosted on a private repository. You need to have a running
-`ssh-agent` with your key inside to access the repository.
-
-To see if your environment is correct, check if your key appears in the output
-of:
-
-    ssh-add -l
-
-The process to work with ssh keys is described at length in the [GitHub
-documentation][4]. To summarize, if `ssh-add` cannot open a connection to your
-authentication agent, you can run a local agent with:
-
-    eval $(ssh-agent)
-
-If the agent has no identities, ensure that your key file is available under `
-~/.ssh` and register them with:
-
-    ssh-add <key_file>
-
-Finally, check that you are able to clone the repository:
-
-    git clone ssh://git@github.com/SiliconLabs/wisun-br-linux
-
-If you still don't have access, maybe your key does not match the key of your
-GitHub account or you don't have permission to access the `wisun-br-linux`
-repository.
-
-[4]: https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh
 
 ## How to use a local copy of `wsbrd` sources
 
