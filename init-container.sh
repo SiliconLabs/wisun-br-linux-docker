@@ -135,6 +135,8 @@ launch_dhcp6()
 
 launch_dbus()
 {
+    # Clean up possible previous instance
+    rm -f /var/run/dbus.pid
     dbus-daemon --system
 }
 
