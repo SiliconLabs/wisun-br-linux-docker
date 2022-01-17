@@ -45,7 +45,7 @@ COPY --from=builder /etc/dbus-1/system.d /etc/dbus-1/system.d
 COPY --from=builder /usr/local /usr/local
 COPY init-container.sh /init
 COPY wsbrd.conf /etc/wsbrd.conf
-COPY firmware-winsun-rcp-0.4.0.bin /firmware-winsun-rcp.bin
+COPY firmware-winsun-rcp-0.5.0.bin /firmware-winsun-rcp.bin
 COPY dhclient-hook-prefix-delegation /etc/dhclient-exit-hooks.d/prefix_delegation
 COPY wisun-device-traces /usr/bin/wisun-device-traces
 # Trick: $GIT_DESCRIBE often changes, so place this line at the end to take
