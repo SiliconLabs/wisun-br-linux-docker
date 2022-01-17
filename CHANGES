@@ -1,3 +1,12 @@
+v2.4.4
+------
+
+  - In case the container was aborded, it might become unstarted. It was
+    particulary annoying when the docker was started with
+    --restart=unless-stopped.
+  - Bump wsbrd to v1.1.0
+  - Bump built-in RCP to v0.5.0
+
 v2.4.3
 ------
 
