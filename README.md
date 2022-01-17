@@ -205,7 +205,7 @@ this case, Dockerfile uses this directory instead of cloning the original
 repository. So, you can do:
 
     git clone ssh://git@github.com/SiliconLabs/wisun-br-linux
-    docker build --build-arg "GIT_DESCRIBE=$(git describe --tag --match v*)" -t wisun-img .
+    DOCKER_BUILDKIT=1 docker build --build-arg "GIT_DESCRIBE=$(git describe --tag --match v*)" -t wisun-img .
 
 
 > Option `--ssh default` is no more necessary
