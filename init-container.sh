@@ -383,7 +383,7 @@ while true; do
             ;;
         -F|--flash)
             if [ -z "$2" -o "$2" == "-" ]; then
-                FIRMWARE=/firmware-winsun-rcp.bin
+                FIRMWARE=/firmware-winsun-rcp.s37
             else
                 FIRMWARE=$2
             fi
