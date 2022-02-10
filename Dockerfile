@@ -5,6 +5,7 @@
 FROM alpine:3.12 AS builder
 LABEL maintainer="Jérôme Pouiller <jerome.pouiller@silabs.com>"
 RUN apk add build-base git
+RUN git config --global advice.detachedHead false
 RUN echo -n > /etc/issue
 
 WORKDIR /usr/src
