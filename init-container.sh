@@ -249,25 +249,9 @@ launch_last_process()
 
 flash_firmware()
 {
-    IS_MANDATORY=$1
-    cat << 'EOF' > /tmp/openocd-rtt.cfg
-rtt setup 0x20001c00 0x04000 "SEGGER RTT"
-rtt server start 1001 0
-telnet_port 1002
-gdb_port 1003
-tcl_port 1004
-init
-rtt start
-EOF
-    echo " ---> [1mLaunch OpenOCD[0m"
-    openocd -d0 -f board/efm32.cfg -f /tmp/openocd-rtt.cfg &
-    OPENOCD_PID=$!
-    sleep 1
-    [ -d /proc/$OPENOCD_PID ] || die "Cannot connect to JLink probe"
+    echo " ---> [1mFlash firmware[0m"
     [ -e "$FIRMWARE" ] || die "'$FIRMWARE' not found (missing -v in docker command?)"
-    echo "run \"program $FIRMWARE 0 reset\" on JLink probe"
-    echo "program $FIRMWARE 0 reset" | nc 127.0.0.1 1002 > /dev/null
-    kill $OPENOCD_PID
+    openocd -f board/efm32.cfg -c "program $FIRMWARE 0 reset exit"
     echo "You may have to hard-reset the board if it hangs"
 }
 
