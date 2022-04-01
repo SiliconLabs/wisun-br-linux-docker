@@ -1,3 +1,11 @@
+v2.5
+------
+
+  - Add dependencies for future wsbrd releaes
+  - Simplify the way the device is flashed
+  - Bump wsbrd to v1.2.0
+  - Bump built-in RCP to v0.6.0
+
 v2.4.4
 ------
 
