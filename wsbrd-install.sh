@@ -13,7 +13,7 @@ set -e
 
 apk add git openssh-client cmake ninja pkgconf linux-headers libnl3-dev elogind-dev cargo
 if [ ! -d wsbrd ]; then
-    git clone --depth=10 --quiet --branch=v1.1.0 https://github.com/SiliconLabs/wisun-br-linux ./wsbrd
+    git clone --depth=10 --quiet --branch=v1.2.0 https://github.com/SiliconLabs/wisun-br-linux ./wsbrd
 fi
 cmake -S ./wsbrd -B ./wsbrd-build -G Ninja
 ninja -C ./wsbrd-build
