@@ -11,7 +11,7 @@ set -e
 # This script expects to run as root
 [ $(id -u) == 0 ]
 
-apk add git openssh-client cmake ninja pkgconf linux-headers libnl3-dev elogind-dev cargo
+apk add git openssh-client cmake ninja pkgconf linux-headers libnl3-dev elogind-dev cargo dbus-dev
 if [ ! -d wsbrd ]; then
     git clone --depth=10 --quiet --branch=v1.2.0 https://github.com/SiliconLabs/wisun-br-linux ./wsbrd
 fi
