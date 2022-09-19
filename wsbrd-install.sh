@@ -15,6 +15,7 @@ apk add git openssh-client cmake ninja pkgconf linux-headers libnl3-dev elogind-
 if [ ! -d wsbrd ]; then
     git clone --depth=10 --quiet --branch=v1.3.3 https://github.com/SiliconLabs/wisun-br-linux ./wsbrd
 fi
+export CARGO_NET_GIT_FETCH_WITH_CLI=true
 cmake -S ./wsbrd -B ./wsbrd-build -G Ninja
 ninja -C ./wsbrd-build
 ninja -C ./wsbrd-build install
