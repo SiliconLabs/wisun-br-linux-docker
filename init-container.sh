@@ -203,29 +203,6 @@ launch_radvd()
     radvd --logmethod stderr
 }
 
-launch_ndppd()
-{
-    IPV6_NET=$1
-
-    echo " ---> [1mLaunch ndppd on $IPV6_NET[0m"
-    cat << EOF > /etc/ndppd.conf
-proxy eth0 {
-    autowire yes
-    rule $IPV6_NET {
-        iface tun0
-    }
-}
-
-proxy tun0 {
-    autowire yes
-    rule $IPV6_NET {
-        iface eth0
-    }
-}
-EOF
-    ndppd -d
-}
-
 launch_last_process()
 {
     echo " ---> [1mResult of 'ip -6 addr':[0m"
@@ -266,8 +243,8 @@ run_proxy()
     IPV6_NET=$(rdisc6 -r 10 -w 400 -q -1 eth0)
     [ "$IPV6_NET" ] || die "Failed to get IPv6 address"
 
+    WSBRD_ARGS="$WSBRD_ARGS -o neighbor_proxy=eth0"
     launch_wsbrd $IPV6_NET
-    launch_ndppd $IPV6_NET
     launch_last_process
 }
 
@@ -277,8 +254,8 @@ run_site_local()
 
     IPV6_NET=fd$(get_random_prefix)::/64
     launch_radvd $IPV6_NET adv_prefix
+    WSBRD_ARGS="$WSBRD_ARGS -o neighbor_proxy=eth0"
     launch_wsbrd $IPV6_NET
-    launch_ndppd $IPV6_NET
     launch_last_process
 }
 
