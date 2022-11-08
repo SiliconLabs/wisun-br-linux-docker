@@ -414,6 +414,7 @@ check_privilege
 
 # If accept_ra=1, the default route is dropped when IP forwarding is enabled
 sysctl -q net.ipv6.conf.eth0.accept_ra=2
+# Docker disables IPv6 by default, we need to reactivate it
 sysctl -q net.ipv6.conf.all.disable_ipv6=0
 launch_dbus
 [ "$LAUNCH_DHCP4" ] && launch_dhcp4
