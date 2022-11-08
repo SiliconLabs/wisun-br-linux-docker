@@ -1,6 +1,13 @@
 v2.6.1
 ------
 
+  - Bump wsbrd to v1.4
+  - For the proxy mode, replace ndppd by the native support provided by wsbrd.
+    This new way to handle neighbor proxy is far more reliable.
+
+v2.6.1
+------
+
   - Fix incompatibility with last update of github.com
 
 v2.6
