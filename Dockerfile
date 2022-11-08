@@ -8,12 +8,6 @@ RUN apk add build-base git
 RUN git config --global advice.detachedHead false
 RUN echo -n > /etc/issue
 
-WORKDIR /usr/src
-COPY ndppd-install.sh                          .
-COPY ndppd-0001-Fixes-strerror_r-GNU-XSI.patch .
-COPY ndppd-0002-fix-poll-header.patch          .
-RUN  ./ndppd-install.sh
-
 WORKDIR /usr/src/
 COPY openocd-install.sh                        .
 RUN  ./openocd-install.sh
