@@ -1,3 +1,11 @@
+v2.8
+----
+
+  - Bump wsbrd to v1.4
+  - Bump built-in RCP to v1.2.0. Note this firmware still not work with EFR
+    series 2 (EFRxG2x). For now, the docker image is still unable to detect the
+    type of connected device.
+
 v2.7
 ----
 
