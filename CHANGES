@@ -1,5 +1,5 @@
-v2.6.1
-------
+v2.7
+----
 
   - Bump wsbrd to v1.4
   - For the proxy mode, replace ndppd by the native support provided by wsbrd.
